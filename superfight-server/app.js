@@ -35,17 +35,24 @@ function run() {
 function userConnect(socket) {
   const playerId = socket.id;
   console.log('a player connected: ' + playerId);
-  socket.on('disconnect', () => {
-    console.log('a player disconnected: ' + playerId);
-  });
   socket.on('setName', (name) => {
+    console.log(`${name} identified as: ${playerId}`);
     playerList.push({ id: playerId, name: name });
-    listPlayers();
+    updatePlayerList();
+
+    socket.on('disconnect', () => {
+      console.log('a player disconnected: ' + playerId);
+      playerList = playerList.filter((player) => player.id !== playerId);
+      updatePlayerList();
+    });
   });
 }
 
-function listPlayers() {
+function updatePlayerList() {
+  io.emit('listPlayers', playerList);
+  console.log('CURRENT PLAYERS\n---------------');
   playerList.forEach((player) => {
     console.log(`${player.name} : ${player.id}`);
   });
+  console.log('---------------');
 }

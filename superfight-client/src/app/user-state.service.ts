@@ -17,4 +17,12 @@ export class UserStateService {
   getName(): string {
     return this.name;
   }
+
+  canActivate(): boolean {
+    if (!this.name || !this.name.length) {
+      this.router.navigateByUrl('');
+      return false;
+    }
+    return true;
+  }
 }
