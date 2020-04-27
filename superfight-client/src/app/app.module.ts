@@ -8,6 +8,9 @@ import { FormsModule } from '@angular/forms';
 import { MainLayoutComponent } from './main-layout/main-layout.component';
 import { HomeScreenComponent } from './home-screen/home-screen.component';
 import { GameScreenComponent } from './game-screen/game-screen.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatListModule } from '@angular/material/list';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   declarations: [
@@ -21,6 +24,9 @@ import { GameScreenComponent } from './game-screen/game-screen.component';
     AppRoutingModule,
     SocketIoModule.forRoot(appSocketConfig),
     FormsModule,
+    BrowserAnimationsModule,
+    MatListModule,
+    MatButtonModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

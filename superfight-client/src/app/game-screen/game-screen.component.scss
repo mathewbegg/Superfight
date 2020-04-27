@@ -1,0 +1,9 @@
+:host-context {
+  display: flex;
+}
+
+.sidebar {
+  &.leader {
+    color: blue;
+  }
+}
