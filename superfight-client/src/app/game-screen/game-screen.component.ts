@@ -14,10 +14,16 @@ export class GameScreenComponent implements OnInit {
   constructor(private socket: Socket, private userService: UserStateService) {}
 
   ngOnInit() {
+    this.socket.connect();
     this.name = this.userService.getName();
     this.socket.emit('setName', this.name);
     this.socket.on('listPlayers', (playerList) => {
       this.playerList = playerList;
     });
+  }
+
+  leaveGame() {
+    this.userService.leaveGame();
+    this.socket.disconnect();
   }
 }

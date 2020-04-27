@@ -14,6 +14,10 @@ export class UserStateService {
     this.router.navigateByUrl('/game');
   }
 
+  leaveGame() {
+    this.router.navigateByUrl('');
+  }
+
   getName(): string {
     return this.name;
   }

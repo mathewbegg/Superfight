@@ -35,16 +35,19 @@ function run() {
 function userConnect(socket) {
   const playerId = socket.id;
   console.log('a player connected: ' + playerId);
+
+  socket.on('disconnect', () => {
+    console.log('a player disconnected: ' + playerId);
+    playerList = playerList.filter((player) => player.id !== playerId);
+    socket.emit('listPlayers', playerList);
+    updatePlayerList(socket);
+  });
+
   socket.on('setName', (name) => {
     console.log(`${name} identified as: ${playerId}`);
     playerList.push({ id: playerId, name: name });
+    socket.emit('listPlayers', playerList);
     updatePlayerList();
-
-    socket.on('disconnect', () => {
-      console.log('a player disconnected: ' + playerId);
-      playerList = playerList.filter((player) => player.id !== playerId);
-      updatePlayerList();
-    });
   });
 }
 
