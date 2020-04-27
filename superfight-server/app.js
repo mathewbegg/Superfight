@@ -10,6 +10,8 @@ Http.listen(3000, () => {
 const mongoConnectionString = 'mongodb://localhost:27017';
 var db;
 var catalogue;
+var whiteDeck = [];
+var blackDeck = [];
 var playerList = [];
 
 MongoClient.connect(
@@ -22,6 +24,13 @@ MongoClient.connect(
     console.log('mongoDB connected');
     db = client.db('superfightDB');
     catalogue = db.collection('catalogue');
+    catalogue.find({}).forEach((card) => {
+      if (card.color === 'white') {
+        whiteDeck.push(card);
+      } else if (card.color === 'black') {
+        blackDeck.push(card);
+      }
+    });
     run();
   }
 );
@@ -44,16 +53,29 @@ function userConnect(socket) {
   });
 
   socket.on('setName', (name) => {
-    console.log(`${name} identified as: ${playerId}`);
-    playerList.push({ id: playerId, name: name });
+    console.log(`${playerId} identified as: ${name}`);
+    const player = { id: playerId, name: name };
+    player.isLeader = playerList.length === 0;
+    playerList.push(player);
     socket.emit('listPlayers', playerList);
     updatePlayerList();
+  });
+
+  socket.on('drawWhite', () => {
+    if (whiteDeck.length) {
+      const whiteCard = whiteDeck.pop();
+      console.log(whiteCard);
+      socket.emit('getCard', whiteCard);
+    }
   });
 }
 
 function updatePlayerList() {
   io.emit('listPlayers', playerList);
   console.log('CURRENT PLAYERS\n---------------');
+  if (!playerList.length) {
+    console.log('NONE');
+  }
   playerList.forEach((player) => {
     console.log(`${player.name} : ${player.id}`);
   });

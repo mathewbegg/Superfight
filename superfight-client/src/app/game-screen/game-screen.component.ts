@@ -10,6 +10,8 @@ import { UserStateService } from '../user-state.service';
 export class GameScreenComponent implements OnInit {
   name: string;
   playerList = [];
+  cards = [];
+  isLeader = false;
 
   constructor(private socket: Socket, private userService: UserStateService) {}
 
@@ -19,11 +21,19 @@ export class GameScreenComponent implements OnInit {
     this.socket.emit('setName', this.name);
     this.socket.on('listPlayers', (playerList) => {
       this.playerList = playerList;
+      this.isLeader = this.playerList[0].name === this.name;
+    });
+    this.socket.on('getCard', (card) => {
+      this.cards.push(card);
     });
   }
 
   leaveGame() {
     this.userService.leaveGame();
     this.socket.disconnect();
+  }
+
+  drawWhite() {
+    this.socket.emit('drawWhite');
   }
 }
