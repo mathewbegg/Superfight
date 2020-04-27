@@ -3,7 +3,11 @@
 }
 
 .sidebar {
-  &.leader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: lightgrey;
+  .isYou {
     color: blue;
   }
 }
