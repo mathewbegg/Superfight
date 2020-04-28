@@ -8,5 +8,10 @@
     </mat-list-item>
   </mat-list>
   <button mat-button (click)="leaveGame()">Leave</button>
-  <button *ngIf="isLeader" mat-button>New Game</button>
+  <button *ngIf="isLeader" (click)="newGame()" mat-button>New Game</button>
 </div>
+<ul *ngIf="gameState">
+  <li>{{ gameState.stage.stageName }}</li>
+  <li>{{ gameState.stage.playerA.name }}</li>
+  <li>{{ gameState.stage.playerA.whiteOptions[0] }}</li>
+</ul>

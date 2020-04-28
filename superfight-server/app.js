@@ -8,11 +8,12 @@ Http.listen(3000, () => {
 });
 
 const mongoConnectionString = 'mongodb://localhost:27017';
-var db;
-var catalogue;
-var whiteDeck = [];
-var blackDeck = [];
-var playerList = [];
+let db;
+let catalogue;
+let whiteDeck = [];
+let blackDeck = [];
+let playerList = [];
+let gameState;
 
 MongoClient.connect(
   mongoConnectionString,
@@ -61,11 +62,12 @@ function userConnect(socket) {
     updatePlayerList();
   });
 
-  socket.on('drawWhite', () => {
-    if (whiteDeck.length) {
-      const whiteCard = whiteDeck.pop();
-      console.log(whiteCard);
-      socket.emit('getCard', whiteCard);
+  socket.on('newGame', () => {
+    if (playerId && playerList[0] && playerList[0].id === playerId) {
+      console.log('starting new game');
+      newGame(socket);
+    } else {
+      console.log('non-leaders cannot start the game');
     }
   });
 }
@@ -80,4 +82,35 @@ function updatePlayerList() {
     console.log(`${player.name} : ${player.id}`);
   });
   console.log('---------------');
+}
+
+function newGame(socket) {
+  const freshScore = playerList.map((player) => {
+    return {
+      name: player.name,
+      id: player.id,
+      score: 0,
+    };
+  });
+
+  gameState = {
+    stage: {
+      stageName: 'SELECTING',
+      playerA: {
+        name: 'testPlayer1',
+        id: 'testID',
+        whiteOptions: ['testWhite1'],
+        blackOptions: ['testBlack2'],
+      },
+      playerB: {
+        name: 'testPlayer2',
+        id: 'testID',
+        whiteOptions: ['testWhite2'],
+        blackOptions: ['testBlack2'],
+      },
+    },
+    scoreBoard: freshScore,
+  };
+
+  socket.emit('updateGameState', gameState);
 }

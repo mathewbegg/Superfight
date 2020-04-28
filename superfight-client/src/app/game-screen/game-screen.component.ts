@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 import { UserStateService } from '../user-state.service';
+import { GameState } from '../game.models';
 
 @Component({
   selector: 'spf-game-screen',
@@ -12,6 +13,7 @@ export class GameScreenComponent implements OnInit {
   playerList = [];
   cards = [];
   isLeader = false;
+  gameState: GameState;
 
   constructor(private socket: Socket, private userService: UserStateService) {}
 
@@ -26,6 +28,9 @@ export class GameScreenComponent implements OnInit {
     this.socket.on('getCard', (card) => {
       this.cards.push(card);
     });
+    this.socket.on('updateGameState', (gameState) => {
+      this.gameState = gameState;
+    });
   }
 
   leaveGame() {
@@ -33,7 +38,7 @@ export class GameScreenComponent implements OnInit {
     this.socket.disconnect();
   }
 
-  drawWhite() {
-    this.socket.emit('drawWhite');
+  newGame() {
+    this.socket.emit('newGame');
   }
 }
