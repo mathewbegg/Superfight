@@ -11,7 +11,7 @@
   <button *ngIf="isLeader" (click)="newGame()" mat-button>New Game</button>
 </div>
 <ul *ngIf="gameState">
-  <li>{{ gameState.stage.stageName }}</li>
-  <li>{{ gameState.stage.playerA.name }}</li>
-  <li>{{ gameState.stage.playerA.whiteOptions[0] }}</li>
+  <li>{{ gameState.phase.phaseName }}</li>
+  <li>{{ gameState.phase.playerA.name }}</li>
+  <li>{{ gameState.phase.playerA.whiteOptions[0] }}</li>
 </ul>

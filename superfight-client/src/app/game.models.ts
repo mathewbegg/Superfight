@@ -1,4 +1,4 @@
-export enum GameStageName {
+export enum PhaseName {
   SELECTING = 'SELECTING',
   DEBATING = 'DEBATING',
   VOTING = 'VOTING',
@@ -14,6 +14,12 @@ export interface Card {
   color: string;
 }
 
+export interface Player {
+  id: string;
+  name: string;
+  votes?: number;
+}
+
 export interface playerScore {
   name: string;
   id: string;
@@ -21,40 +27,39 @@ export interface playerScore {
 }
 
 export interface GameState {
-  stage: GameStage;
+  phase: GamePhase;
   scoreboard: playerScore[];
 }
 
-export interface GameStage {
-  stageName: GameStageName;
-  playerA: any;
-  playerB: any;
+export interface privatePackage {
+  whiteOptions: Card[];
+  blackOptions: Card[];
 }
 
-export interface SelectingStage extends GameStage {
-  stageName: GameStageName.SELECTING;
+export interface GamePhase {
+  phaseName: PhaseName;
+  playerA: Player;
+  playerB: Player;
+}
+
+export interface SelectingPhase extends GamePhase {
+  phaseName: PhaseName.SELECTING;
+}
+
+export interface DebatingPhase extends GamePhase {
+  phaseName: PhaseName.DEBATING;
+}
+
+export interface VotingPhase extends GamePhase {
+  phaseName: PhaseName.VOTING;
   playerA: {
     name: string;
     id: string;
-    whiteOptions: Card[];
-    blackOptions: Card[];
+    votes: number;
   };
   playerB: {
     name: string;
     id: string;
-    whiteOptions: Card[];
-    blackOptions: Card[];
+    votes: number;
   };
-}
-
-export interface DebatingStage extends GameStage {
-  stageName: GameStageName.DEBATING;
-  playerA: { name: string };
-  playerB: { name: string };
-}
-
-export interface VotingStage extends GameStage {
-  stageName: GameStageName.VOTING;
-  playerA: { name: string };
-  playerB: { name: string };
 }

@@ -8,12 +8,11 @@ Http.listen(3000, () => {
 });
 
 const mongoConnectionString = 'mongodb://localhost:27017';
-let db;
-let catalogue;
-let whiteDeck = [];
-let blackDeck = [];
-let playerList = [];
-let gameState;
+var db;
+var catalogue;
+var playerList = [];
+var masterGameState = {};
+var matchupList;
 
 MongoClient.connect(
   mongoConnectionString,
@@ -25,13 +24,6 @@ MongoClient.connect(
     console.log('mongoDB connected');
     db = client.db('superfightDB');
     catalogue = db.collection('catalogue');
-    catalogue.find({}).forEach((card) => {
-      if (card.color === 'white') {
-        whiteDeck.push(card);
-      } else if (card.color === 'black') {
-        blackDeck.push(card);
-      }
-    });
     run();
   }
 );
@@ -63,11 +55,10 @@ function userConnect(socket) {
   });
 
   socket.on('newGame', () => {
-    if (playerId && playerList[0] && playerList[0].id === playerId) {
-      console.log('starting new game');
+    if (playerId && playerId.length >= 2 && playerList[0].id === playerId) {
       newGame(socket);
     } else {
-      console.log('non-leaders cannot start the game');
+      console.log('cannot start game');
     }
   });
 }
@@ -85,32 +76,73 @@ function updatePlayerList() {
 }
 
 function newGame(socket) {
-  const freshScore = playerList.map((player) => {
+  masterGameState.players = playerList.map((player) => {
     return {
-      name: player.name,
-      id: player.id,
+      ...player,
+      timesPlayed: 0,
       score: 0,
     };
   });
+  matchupList = [];
+  playerList.forEach((playerA) => {
+    playerList.forEach((playerB) => {
+      if (playerA.id !== playerB.id) {
+        matchupList.push({
+          playerA: playerA,
+          playerB: playerB,
+          timesPlayed: 0,
+        });
+      }
+    });
+  });
+  masterGameState.scoreboard = generateFreshScoreboard(playerList);
+  masterGameState.phase = findMatchup();
+  io.emit('updateGameState', masterGameState);
+}
 
-  gameState = {
-    stage: {
-      stageName: 'SELECTING',
-      playerA: {
-        name: 'testPlayer1',
-        id: 'testID',
-        whiteOptions: ['testWhite1'],
-        blackOptions: ['testBlack2'],
-      },
-      playerB: {
-        name: 'testPlayer2',
-        id: 'testID',
-        whiteOptions: ['testWhite2'],
-        blackOptions: ['testBlack2'],
-      },
-    },
-    scoreBoard: freshScore,
+/**
+ * Finds a suitable matchup,
+ * adjusts matchupList accordingly,
+ * returns the resulting selecting phase,
+ */
+function findMatchup() {
+  const firstPlayer = masterGameState.players[0];
+  let secondPlayer;
+  let matchupFound = false;
+  for (let i = 0; i < matchupList.length; i++) {
+    if (!matchupFound) {
+      if (matchupList[i].playerA.id === firstPlayer.id) {
+        secondPlayer = matchupList[i].playerB;
+        matchupList[i].timesPlayed++;
+        matchupFound = true;
+      } else if (matchupList.playerB.id === firstPlayer.id) {
+        secondPlayer = matchupList[i].playerA;
+        matchupList[i].timesPlayed++;
+        matchupFound = true;
+      }
+    } else if (
+      i < matchupList.length - 1 &&
+      matchupList[i] >= matchupList[i + 1]
+    ) {
+      //shifting matchup to proper place in queue
+      const temp = matchupList[i];
+      matchupList[i] = matchupList[i + 1];
+      matchupList[i + 1] = temp;
+    }
+  }
+  return generateSelectingPhase(firstPlayer, secondPlayer);
+}
+
+function generateSelectingPhase(playerA, playerB) {
+  return {
+    phaseName: 'SELECTING',
+    playerA: playerA,
+    playerB: playerB,
   };
+}
 
-  socket.emit('updateGameState', gameState);
+function generateFreshScoreboard(players) {
+  return players.map((player) => {
+    return { ...player, score: 0 };
+  });
 }

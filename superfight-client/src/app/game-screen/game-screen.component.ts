@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 import { UserStateService } from '../user-state.service';
-import { GameState } from '../game.models';
+import { GameState, Player } from '../game.models';
 
 @Component({
   selector: 'spf-game-screen',
@@ -10,10 +10,10 @@ import { GameState } from '../game.models';
 })
 export class GameScreenComponent implements OnInit {
   name: string;
-  playerList = [];
+  playerList: Player[] = [];
   cards = [];
   isLeader = false;
-  gameState: GameState;
+  gameState: any;
 
   constructor(private socket: Socket, private userService: UserStateService) {}
 
@@ -25,10 +25,8 @@ export class GameScreenComponent implements OnInit {
       this.playerList = playerList;
       this.isLeader = this.playerList[0].name === this.name;
     });
-    this.socket.on('getCard', (card) => {
-      this.cards.push(card);
-    });
     this.socket.on('updateGameState', (gameState) => {
+      console.log(gameState);
       this.gameState = gameState;
     });
   }
