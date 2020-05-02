@@ -2,7 +2,7 @@
   <mat-list>
     <mat-list-item
       *ngFor="let player of playerList"
-      [class.isYou]="player.name === name"
+      [class.isYou]="player.id === id"
     >
       {{ player.name }}<span *ngIf="player.isLeader">&nbsp;(Leader)</span>
     </mat-list-item>
@@ -10,8 +10,10 @@
   <button mat-button (click)="leaveGame()">Leave</button>
   <button *ngIf="isLeader" (click)="newGame()" mat-button>New Game</button>
 </div>
-<ul *ngIf="gameState">
-  <li>{{ gameState.phase.phaseName }}</li>
-  <li>{{ gameState.phase.playerA.name }}</li>
-  <li>{{ gameState.phase.playerA.whiteOptions[0] }}</li>
-</ul>
+<div *ngIf="gameState" class="json-container">
+  {{ gameState | json }}
+</div>
+<br />
+<div *ngIf="privateState" class="json-container">
+  {{ privateState | json }}
+</div>

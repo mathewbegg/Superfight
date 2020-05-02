@@ -24,15 +24,11 @@ MongoClient.connect(
     console.log('mongoDB connected');
     db = client.db('superfightDB');
     catalogue = db.collection('catalogue');
-    run();
+    io.on('connection', (socket) => {
+      userConnect(socket);
+    });
   }
 );
-
-function run() {
-  io.on('connection', (socket) => {
-    userConnect(socket);
-  });
-}
 
 function userConnect(socket) {
   const playerId = socket.id;
@@ -41,21 +37,18 @@ function userConnect(socket) {
   socket.on('disconnect', () => {
     console.log('a player disconnected: ' + playerId);
     playerList = playerList.filter((player) => player.id !== playerId);
-    socket.emit('listPlayers', playerList);
-    updatePlayerList(socket);
+    updatePlayerList();
   });
 
   socket.on('setName', (name) => {
     console.log(`${playerId} identified as: ${name}`);
     const player = { id: playerId, name: name };
-    player.isLeader = playerList.length === 0;
     playerList.push(player);
-    socket.emit('listPlayers', playerList);
     updatePlayerList();
   });
 
   socket.on('newGame', () => {
-    if (playerId && playerId.length >= 2 && playerList[0].id === playerId) {
+    if (playerId && playerId.length >= 3 && playerList[0].id === playerId) {
       newGame(socket);
     } else {
       console.log('cannot start game');
@@ -64,15 +57,19 @@ function userConnect(socket) {
 }
 
 function updatePlayerList() {
-  io.emit('listPlayers', playerList);
   console.log('CURRENT PLAYERS\n---------------');
   if (!playerList.length) {
     console.log('NONE');
+  } else {
+    playerList[0].isLeader = true;
+    playerList.forEach((player) => {
+      console.log(
+        `${player.name} : ${player.id} ${player.isLeader ? '(leader)' : ''}`
+      );
+    });
   }
-  playerList.forEach((player) => {
-    console.log(`${player.name} : ${player.id}`);
-  });
   console.log('---------------');
+  io.emit('listPlayers', playerList);
 }
 
 function newGame(socket) {
@@ -97,7 +94,29 @@ function newGame(socket) {
   });
   masterGameState.scoreboard = generateFreshScoreboard(playerList);
   masterGameState.phase = findMatchup();
-  io.emit('updateGameState', masterGameState);
+  updateClients();
+}
+
+function updateClients() {
+  const phase = masterGameState.phase;
+  const updatePackage = {
+    phase: phase,
+    scoreboard: masterGameState.scoreboard,
+  };
+
+  io.emit('updateGameState', updatePackage);
+  if (phase.phaseName === 'SELECTING') {
+    io.to(phase.playerA.id).emit('updatePrivateState', [
+      'card1',
+      'card2',
+      'card3',
+    ]);
+    io.to(phase.playerB.id).emit('updatePrivateState', [
+      'card4',
+      'card5',
+      'card6',
+    ]);
+  }
 }
 
 /**
@@ -120,7 +139,9 @@ function findMatchup() {
         matchupList[i].timesPlayed++;
         matchupFound = true;
       }
-    } else if (
+    }
+    if (
+      matchupFound &&
       i < matchupList.length - 1 &&
       matchupList[i] >= matchupList[i + 1]
     ) {

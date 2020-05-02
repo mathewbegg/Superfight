@@ -17,6 +17,7 @@ export interface Card {
 export interface Player {
   id: string;
   name: string;
+  isLeader?: boolean;
   votes?: number;
 }
 
