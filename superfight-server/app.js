@@ -2,6 +2,7 @@ const Express = require('express')();
 const Http = require('http').Server(Express);
 const io = require('socket.io')(Http);
 const MongoClient = require('mongodb').MongoClient;
+const _ = require('lodash');
 
 Http.listen(3000, () => {
   console.log('Listening at :3000...');
@@ -9,7 +10,6 @@ Http.listen(3000, () => {
 
 const mongoConnectionString = 'mongodb://localhost:27017';
 var db;
-var catalogue;
 var playerList = [];
 var masterGameState = {};
 var matchupList;
@@ -23,7 +23,6 @@ MongoClient.connect(
     if (err) return console.error(err);
     console.log('mongoDB connected');
     db = client.db('superfightDB');
-    catalogue = db.collection('catalogue');
     io.on('connection', (socket) => {
       userConnect(socket);
     });
@@ -48,7 +47,7 @@ function userConnect(socket) {
   });
 
   socket.on('newGame', () => {
-    if (playerId && playerId.length >= 3 && playerList[0].id === playerId) {
+    if (playerId && playerList.length >= 3 && playerList[0].id === playerId) {
       newGame(socket);
     } else {
       console.log('cannot start game');
@@ -72,7 +71,9 @@ function updatePlayerList() {
   io.emit('listPlayers', playerList);
 }
 
-function newGame(socket) {
+async function newGame(socket) {
+  await shuffleWhiteDeck();
+  await shuffleBlackDeck();
   masterGameState.players = playerList.map((player) => {
     return {
       ...player,
@@ -104,19 +105,53 @@ function updateClients() {
     scoreboard: masterGameState.scoreboard,
   };
 
-  io.emit('updateGameState', updatePackage);
+  io.emit('updatePublicState', updatePackage);
   if (phase.phaseName === 'SELECTING') {
-    io.to(phase.playerA.id).emit('updatePrivateState', [
-      'card1',
-      'card2',
-      'card3',
-    ]);
-    io.to(phase.playerB.id).emit('updatePrivateState', [
-      'card4',
-      'card5',
-      'card6',
-    ]);
+    if (masterGameState.whiteDeck.length < 6) {
+      shuffleWhiteDeck();
+    }
+    if (masterGameState.blackDeck.length < 6) {
+      shuffleBlackDeck();
+    }
+    const packageA = {
+      whiteOptions: [
+        masterGameState.whiteDeck.pop(),
+        masterGameState.whiteDeck.pop(),
+        masterGameState.whiteDeck.pop(),
+      ],
+      blackOptions: [
+        masterGameState.blackDeck.pop(),
+        masterGameState.blackDeck.pop(),
+        masterGameState.blackDeck.pop(),
+      ],
+    };
+    const packageB = {
+      whiteOptions: [
+        masterGameState.whiteDeck.pop(),
+        masterGameState.whiteDeck.pop(),
+        masterGameState.whiteDeck.pop(),
+      ],
+      blackOptions: [
+        masterGameState.blackDeck.pop(),
+        masterGameState.blackDeck.pop(),
+        masterGameState.blackDeck.pop(),
+      ],
+    };
+    io.to(phase.playerA.id).emit('updatePrivateState', packageA);
+    io.to(phase.playerB.id).emit('updatePrivateState', packageB);
   }
+}
+
+async function shuffleWhiteDeck() {
+  masterGameState.whiteDeck = _.shuffle(
+    await db.collection('whiteCatalogue').find().toArray()
+  );
+}
+
+async function shuffleBlackDeck() {
+  masterGameState.blackDeck = _.shuffle(
+    await db.collection('blackCatalogue').find().toArray()
+  );
 }
 
 /**

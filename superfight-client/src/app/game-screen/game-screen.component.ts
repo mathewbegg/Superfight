@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 import { UserStateService } from '../user-state.service';
 import { GameState, Player } from '../game.models';
-import { state } from '@angular/animations';
 
 @Component({
   selector: 'spf-game-screen',
@@ -31,7 +30,7 @@ export class GameScreenComponent implements OnInit {
         (player) => player.id === this.id
       )[0]?.isLeader;
     });
-    this.socket.on('updateGameState', (gameState) => {
+    this.socket.on('updatePublicState', (gameState) => {
       console.log(gameState);
       this.gameState = gameState;
     });
