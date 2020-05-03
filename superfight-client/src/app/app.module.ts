@@ -10,6 +10,8 @@ import { GameScreenComponent } from './game-screen/game-screen.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatSidenavModule } from '@angular/material/sidenav';
 
 @NgModule({
   declarations: [AppComponent, HomeScreenComponent, GameScreenComponent],
@@ -21,6 +23,8 @@ import { MatButtonModule } from '@angular/material/button';
     BrowserAnimationsModule,
     MatListModule,
     MatButtonModule,
+    MatToolbarModule,
+    MatSidenavModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

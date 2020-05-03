@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserStateService } from '../user-state.service';
+import * as env from '../../environments/environment';
 
 @Component({
   selector: 'spf-home-screen',
@@ -12,7 +13,12 @@ export class HomeScreenComponent implements OnInit {
 
   constructor(private userService: UserStateService) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    if (!env.environment.production) {
+      this.name =
+        env.mockNames[Math.floor(Math.random() * env.mockNames.length)];
+    }
+  }
 
   connect() {
     if (this.name.length) {

@@ -1,19 +1,40 @@
-<div class="sidebar">
-  <mat-list>
-    <mat-list-item
-      *ngFor="let player of playerList"
-      [class.isYou]="player.id === id"
-    >
-      {{ player.name }}<span *ngIf="player.isLeader">&nbsp;(Leader)</span>
-    </mat-list-item>
-  </mat-list>
-  <button mat-button (click)="leaveGame()">Leave</button>
-  <button *ngIf="isLeader" (click)="newGame()" mat-button>New Game</button>
-</div>
-<div *ngIf="gameState" class="json-container">
-  {{ gameState | json }}
-</div>
-<br />
-<div *ngIf="privateState" class="json-container">
-  {{ privateState | json }}
-</div>
+<mat-toolbar color="primary">SUPERFIGHT</mat-toolbar>
+<mat-sidenav-container>
+  <mat-sidenav mode="side" opened>
+    <div class="sidebar-content">
+      <div class="sidebar-top-content">
+        <button *ngIf="isLeader" (click)="newGame()" mat-button color="accent">
+          New Game
+        </button>
+        <div class="player-list-title">Players</div>
+        <mat-list>
+          <mat-list-item
+            *ngFor="let player of playerList"
+            [class.isYou]="player.id === id"
+          >
+            {{ player.name }}<span *ngIf="player.isLeader">&nbsp;(Leader)</span>
+          </mat-list-item>
+        </mat-list>
+      </div>
+      <button
+        mat-button
+        color="warn"
+        (click)="leaveGame()"
+        class="danger-button"
+      >
+        Leave
+      </button>
+    </div>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <div class="main-content">
+      <div *ngIf="gameState" class="json-container">
+        {{ gameState | json }}
+      </div>
+      <br />
+      <div *ngIf="privateState" class="json-container">
+        {{ privateState | json }}
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

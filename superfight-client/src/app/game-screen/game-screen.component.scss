@@ -1,15 +1,37 @@
-:host-context {
+mat-sidenav-container {
+  width: 100%;
+  height: 100%;
   display: flex;
 }
 
-.sidebar {
+.sidebar-content {
+  height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  background-color: lightgrey;
-  .isYou {
-    color: blue;
+  justify-content: space-between;
+
+  .sidebar-top-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: stretch;
+    text-align: center;
+    .player-list-title {
+      margin-top: 20px;
+      padding-top: 10px;
+      border-top: 1px solid black;
+    }
   }
+}
+
+mat-sidenav-content {
+  display: flex;
+  flex: 1;
+}
+
+::ng-deep .mat-list-item-content {
+  display: flex;
+  justify-content: center;
 }
 
 .json-container {

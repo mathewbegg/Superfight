@@ -1,0 +1,13 @@
+// from https://medium.com/@tomastrajan/the-complete-guide-to-angular-material-themes-4d165a9d24d1
+// define 3 theme color
+// mat-palette accepts $palette-name, main, lighter and darker variants
+$superfight-primary: mat-palette($mat-grey, 800, 500, 900);
+$superfight-accent: mat-palette($mat-teal, 800);
+$superfight-warn: mat-palette($mat-red, 900);
+
+// create theme (use mat-dark-theme for themes with dark backgrounds)
+$superfight: mat-light-theme(
+  $superfight-primary,
+  $superfight-accent,
+  $superfight-warn
+);
