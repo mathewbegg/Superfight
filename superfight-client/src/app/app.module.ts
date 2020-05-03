@@ -8,10 +8,12 @@ import { FormsModule } from '@angular/forms';
 import { HomeScreenComponent } from './home-screen/home-screen.component';
 import { GameScreenComponent } from './game-screen/game-screen.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [AppComponent, HomeScreenComponent, GameScreenComponent],
@@ -25,6 +27,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
     MatButtonModule,
     MatToolbarModule,
     MatSidenavModule,
+    MatIconModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

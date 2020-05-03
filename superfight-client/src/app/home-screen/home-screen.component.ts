@@ -25,4 +25,6 @@ export class HomeScreenComponent implements OnInit {
       this.userService.connectToGame(this.name);
     }
   }
+
+  //TODO style home screen
 }

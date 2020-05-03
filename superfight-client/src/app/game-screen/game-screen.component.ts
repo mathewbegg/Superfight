@@ -48,4 +48,6 @@ export class GameScreenComponent implements OnInit {
   newGame() {
     this.socket.emit('newGame');
   }
+
+  //TODO 'are you sure?' and info dialogs
 }
