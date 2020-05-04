@@ -1,3 +1,6 @@
+@import '~@angular/material/theming';
+@import '../../assets/theme.scss';
+
 mat-sidenav-container {
   width: 100%;
   height: calc(100% - 64px);
@@ -15,6 +18,7 @@ mat-sidenav {
   padding: 8px;
   flex-direction: column;
   justify-content: space-between;
+  color: mat-color($primary);
 
   .sidebar-top-content {
     display: flex;
@@ -25,9 +29,19 @@ mat-sidenav {
     .player-list-title {
       margin-top: 20px;
       padding-top: 10px;
-      border-top: 1px solid black;
+      border-top: 1px solid mat-color($primary);
+      font-weight: bold;
     }
   }
+}
+
+.card-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.highlighted {
+  color: mat-color($accent);
 }
 
 mat-sidenav-content {
@@ -35,11 +49,7 @@ mat-sidenav-content {
   flex: 1;
 }
 
-.mat-list-item-content {
-  display: flex;
-  justify-content: center;
-}
-
 .json-container {
+  //TODO remove
   white-space: pre;
 }

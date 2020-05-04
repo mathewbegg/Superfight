@@ -1,0 +1,44 @@
+@import '~@angular/material/theming';
+@import '../../assets/theme.scss';
+
+@mixin card-dimensions($width) {
+  width: $width;
+  height: $width * 1.6;
+  border-style: solid;
+  border-radius: $width * 0.08;
+  padding: $width * 0.17;
+  font-size: $width * 0.16;
+  font-weight: 600;
+  line-height: $width * 0.17;
+
+  $thin-border: $width * 0.01;
+  $thick-border: $thin-border * 3;
+  $margin: $width * 0.11;
+
+  margin: $margin;
+  border-width: $thin-border;
+
+  &:hover {
+    margin: $margin - $thick-border + $thin-border;
+    border: $thick-border solid mat-color($accent);
+    cursor: pointer;
+  }
+}
+
+.base-card {
+  @include card-dimensions(150px);
+}
+
+.white-card {
+  @extend .base-card;
+  background-color: white;
+  border-color: black;
+  color: black;
+}
+
+.black-card {
+  @extend .base-card;
+  background-color: black;
+  border-color: white;
+  color: white;
+}

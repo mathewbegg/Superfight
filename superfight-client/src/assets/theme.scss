@@ -11,3 +11,7 @@ $superfight: mat-light-theme(
   $superfight-accent,
   $superfight-warn
 );
+
+$primary: map-get($superfight, primary);
+$accent: map-get($superfight, accent);
+$warn: map-get($superfight, warn);

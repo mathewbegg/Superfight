@@ -14,9 +14,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
+import { CardComponent } from './card/card.component';
 
 @NgModule({
-  declarations: [AppComponent, HomeScreenComponent, GameScreenComponent],
+  declarations: [AppComponent, HomeScreenComponent, GameScreenComponent, CardComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

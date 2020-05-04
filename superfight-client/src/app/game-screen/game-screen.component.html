@@ -7,11 +7,12 @@
         </button>
         <div class="player-list-title">Players</div>
         <mat-list>
-          <mat-list-item
-            *ngFor="let player of playerList"
-            [class.isYou]="player.id === id"
-          >
-            {{ player.name }}<span *ngIf="player.isLeader">&nbsp;(Leader)</span>
+          <mat-list-item *ngFor="let player of playerList">
+            <span
+              class="player-list-name"
+              [class.highlighted]="player.id === id"
+              >{{ player.name }}</span
+            ><span *ngIf="player.isLeader">&nbsp;(Leader)</span>
           </mat-list-item>
         </mat-list>
       </div>
@@ -27,13 +28,34 @@
   </mat-sidenav>
   <mat-sidenav-content>
     <div class="main-content">
-      <div *ngIf="gameState" class="json-container">
-        {{ gameState | json }}
-      </div>
-      <br />
-      <div *ngIf="privateState" class="json-container">
-        {{ privateState | json }}
-      </div>
+      <ng-container *ngIf="gameState" [ngSwitch]="gameState.phase.phaseName">
+        <div *ngSwitchCase="'SELECTING'">
+          <h4>{{ gameState.phase.phaseName }}</h4>
+          {{ gameState.phase.playerA.name }} <strong>vs</strong>
+          {{ gameState.phase.playerB.name }}
+        </div>
+        <ng-container
+          *ngIf="
+            gameState.phase.playerA.id === id ||
+            gameState.phase.playerB.id === id
+          "
+        >
+          <div class="card-container">
+            <spf-card
+              *ngFor="let card of privateState.whiteOptions"
+              [card]="card"
+              (click)="whiteCardSelected(card)"
+            ></spf-card>
+          </div>
+          <div class="card-container">
+            <spf-card
+              *ngFor="let card of privateState.blackOptions"
+              (click)="blackCardSelected(card)"
+              [card]="card"
+            ></spf-card>
+          </div>
+        </ng-container>
+      </ng-container>
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>

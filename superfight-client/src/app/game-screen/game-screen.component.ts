@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 import { UserStateService } from '../user-state.service';
-import { GameState, Player } from '../game.models';
+import { GameState, Player, Card } from '../game.models';
 
 @Component({
   selector: 'spf-game-screen',
@@ -47,6 +47,15 @@ export class GameScreenComponent implements OnInit {
 
   newGame() {
     this.socket.emit('newGame');
+  }
+
+  whiteCardSelected(card: Card) {
+    console.log('selected white card: ' + card.text);
+    //TODO Make a card-group component
+  }
+
+  blackCardSelected(card: Card) {
+    console.log('selected black card: ' + card.text);
   }
 
   //TODO 'are you sure?' and info dialogs
