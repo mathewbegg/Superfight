@@ -9,6 +9,8 @@ import { Card } from 'src/app/game.models';
 export class CardGroupComponent implements OnInit {
   @Input() cards: Card[];
 
+  @Input() locked = false;
+
   @Output() cardSelected = new EventEmitter<Card>();
 
   selectedCard: Card;
@@ -18,7 +20,9 @@ export class CardGroupComponent implements OnInit {
   ngOnInit(): void {}
 
   selectCard(card: Card) {
-    this.selectedCard = card;
-    this.cardSelected.emit(card);
+    if (!this.locked) {
+      this.selectedCard = card;
+      this.cardSelected.emit(card);
+    }
   }
 }

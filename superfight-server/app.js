@@ -53,6 +53,12 @@ function userConnect(socket) {
       console.log('cannot start game');
     }
   });
+
+  socket.on('selectFighter', (selection) => {
+    console.log(
+      `${playerId} selected ${selection.white.text} ${selection.black.text}`
+    );
+  });
 }
 
 function updatePlayerList() {
@@ -137,9 +143,37 @@ function updateClients() {
         masterGameState.blackDeck.pop(),
       ],
     };
+    let readyA = false;
+    let readyB = false;
     io.to(phase.playerA.id).emit('updatePrivateState', packageA);
     io.to(phase.playerB.id).emit('updatePrivateState', packageB);
+    // io.to(phase.playerA.id).on('selectFighter', (selection) => {
+    //   masterGameState.playerASelection = selection;
+    //   readyA = true;
+    //   if (readyB) {
+    //     moveToDebate();
+    //   }
+    // });
+    // io.
+    // io.to(phase.playerB.id).on('selectFighter', (selection) => {
+    //   masterGameState.playerBSelection = selection;
+    //   readyB = true;
+    //   if (readyA) {
+    //     moveToDebate();
+    //   }
+    // });
   }
+}
+
+function moveToDebate() {
+  //TODO add third card, implement full debate stage
+  console.log('Moving to debate phase');
+  console.log(
+    `${masterGameState.phase.playerA.name} selects ${masterGameState.playerASelection.white.text} ${masterGameState.playerASelection.black.text}`
+  );
+  console.log(
+    `${masterGameState.phase.playerB.name} selects ${masterGameState.playerBSelection.white.text} ${masterGameState.playerBSelection.black.text}`
+  );
 }
 
 async function shuffleWhiteDeck() {

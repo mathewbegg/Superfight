@@ -14,6 +14,11 @@ export interface Card {
   color: string;
 }
 
+export interface SelectionPair {
+  white: Card;
+  black: Card;
+}
+
 export interface Player {
   id: string;
   name: string;

@@ -1,7 +1,7 @@
 @import '~@angular/material/theming';
 @import '../../../assets/theme.scss'; //TODO paths
 
-@mixin card-dimensions($width) {
+@mixin card-dimensions($width, $hoverEffect: true) {
   width: $width;
   height: $width * 1.6;
   border-style: solid;
@@ -18,28 +18,34 @@
   margin: $margin;
   border-width: $thin-border;
 
-  &:hover,
-  &.selected {
-    margin: $margin - $thick-border + $thin-border;
-    border: $thick-border solid mat-color($accent);
-    cursor: pointer;
+  @if $hoverEffect == true {
+    &.selectable:hover,
+    &.selected {
+      margin: $margin - $thick-border + $thin-border;
+      border: $thick-border solid mat-color($accent);
+      &.selectable {
+        cursor: pointer;
+      }
+    }
   }
 }
 
-.base-card {
-  @include card-dimensions(150px);
-}
-
 .white-card {
-  @extend .base-card;
+  @include card-dimensions(150px);
   background-color: white;
   border-color: black;
   color: black;
 }
 
 .black-card {
-  @extend .base-card;
+  @include card-dimensions(150px);
   background-color: black;
   border-color: white;
   color: white;
+}
+
+.blank-slot {
+  @include card-dimensions(150px, false);
+  background-color: mat-color($primary, lighter);
+  border-color: mat-color($primary);
 }

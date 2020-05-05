@@ -3,6 +3,7 @@
     *ngFor="let card of cards"
     [card]="card"
     [selected]="card === selectedCard"
+    [selectable]="!locked"
     (click)="selectCard(card)"
   ></spf-card>
 </div>

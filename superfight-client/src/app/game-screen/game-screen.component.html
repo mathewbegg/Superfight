@@ -44,6 +44,7 @@
             *ngIf="isPlaying && privateState"
             [whiteOptions]="privateState.whiteOptions"
             [blackOptions]="privateState.blackOptions"
+            (selection)="selectFighter($event)"
           ></spf-selecting-board>
         </div>
       </ng-container>

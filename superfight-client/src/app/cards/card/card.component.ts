@@ -8,7 +8,9 @@ import { Card } from '../../game.models';
 })
 export class CardComponent implements OnInit {
   @Input() card: Card;
-  @Input() selected: false;
+  @Input() selectable = true;
+  @Input() selected = false;
+  @Input() blankSlot = false;
 
   constructor() {}
 

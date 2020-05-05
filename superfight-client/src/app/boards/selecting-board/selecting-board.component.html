@@ -1,14 +1,42 @@
 <div class="cards-area">
-  <spf-card *ngIf="whiteSelection" [card]="whiteSelection"></spf-card>
-  <spf-card *ngIf="blackSelection" [card]="blackSelection"></spf-card>
+  <spf-card
+    [blankSlot]="true"
+    [card]="whiteSelection"
+    [selectable]="false"
+  ></spf-card>
+  <spf-card
+    [blankSlot]="true"
+    [card]="blackSelection"
+    [selectable]="false"
+  ></spf-card>
+  <button
+    *ngIf="whiteSelection && blackSelection"
+    mat-raised-button
+    color="primary"
+    (click)="lockIn()"
+    [disabled]="lockedIn"
+  >
+    <ng-container *ngIf="!lockedIn">
+      <mat-icon>lock_open</mat-icon>
+      Lock In
+    </ng-container>
+    <ng-container *ngIf="lockedIn">
+      <mat-icon>lock</mat-icon>
+      Locked In
+    </ng-container>
+  </button>
 </div>
 <div class="cards-area">
   <spf-card-group
+    [selectable]="!lockedIn"
     [cards]="whiteOptions"
+    [locked]="lockedIn"
     (cardSelected)="selectWhite($event)"
   ></spf-card-group>
   <spf-card-group
+    [selectable]="!lockedIn"
     [cards]="blackOptions"
+    [locked]="lockedIn"
     (cardSelected)="selectBlack($event)"
   ></spf-card-group>
 </div>

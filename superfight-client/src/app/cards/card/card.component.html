@@ -1,9 +1,12 @@
 <div
+  *ngIf="card"
   [ngClass]="{
     'white-card': card.color === 'white',
     'black-card': card.color === 'black',
-    selected: selected
+    selected: selected,
+    selectable: selectable
   }"
 >
   {{ card.text }}
 </div>
+<div *ngIf="!card && blankSlot" class="blank-slot"></div>
