@@ -1,7 +1,8 @@
 <div
   [ngClass]="{
     'white-card': card.color === 'white',
-    'black-card': card.color === 'black'
+    'black-card': card.color === 'black',
+    selected: selected
   }"
 >
   {{ card.text }}

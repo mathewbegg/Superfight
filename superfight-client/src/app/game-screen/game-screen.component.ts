@@ -51,11 +51,29 @@ export class GameScreenComponent implements OnInit {
 
   whiteCardSelected(card: Card) {
     console.log('selected white card: ' + card.text);
-    //TODO Make a card-group component
   }
 
   blackCardSelected(card: Card) {
     console.log('selected black card: ' + card.text);
+  }
+
+  get isPlaying() {
+    return (
+      this?.gameState?.phase?.playerA.id === this.id ||
+      this?.gameState?.phase?.playerB.id
+    );
+  }
+
+  get phaseName() {
+    return this?.gameState?.phase.phaseName;
+  }
+
+  get playerA() {
+    return this?.gameState?.phase?.playerA;
+  }
+
+  get playerB() {
+    return this?.gameState?.phase?.playerB;
   }
 
   //TODO 'are you sure?' and info dialogs

@@ -1,0 +1,14 @@
+<div class="cards-area">
+  <spf-card *ngIf="whiteSelection" [card]="whiteSelection"></spf-card>
+  <spf-card *ngIf="blackSelection" [card]="blackSelection"></spf-card>
+</div>
+<div class="cards-area">
+  <spf-card-group
+    [cards]="whiteOptions"
+    (cardSelected)="selectWhite($event)"
+  ></spf-card-group>
+  <spf-card-group
+    [cards]="blackOptions"
+    (cardSelected)="selectBlack($event)"
+  ></spf-card-group>
+</div>

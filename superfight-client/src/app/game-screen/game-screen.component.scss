@@ -35,9 +35,21 @@ mat-sidenav {
   }
 }
 
-.card-container {
-  display: flex;
-  flex-direction: row;
+.main-content {
+  width: 100%;
+}
+
+.matchup-header {
+  height: 48px;
+  justify-content: center;
+  strong {
+    margin: 0 25px;
+  }
+}
+
+.phase-prompt {
+  height: 32px;
+  justify-content: center;
 }
 
 .highlighted {
@@ -47,9 +59,4 @@ mat-sidenav {
 mat-sidenav-content {
   display: flex;
   flex: 1;
-}
-
-.json-container {
-  //TODO remove
-  white-space: pre;
 }

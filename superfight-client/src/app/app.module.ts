@@ -14,11 +14,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
-import { CardComponent } from './card/card.component';
+import { CardsModule } from './cards/cards.module';
+import { BoardsModule } from './boards/boards.module';
 
 @NgModule({
-  declarations: [AppComponent, HomeScreenComponent, GameScreenComponent, CardComponent],
+  declarations: [AppComponent, HomeScreenComponent, GameScreenComponent],
   imports: [
+    CardsModule,
+    BoardsModule,
     BrowserModule,
     AppRoutingModule,
     SocketIoModule.forRoot(appSocketConfig),

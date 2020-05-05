@@ -1,5 +1,5 @@
 @import '~@angular/material/theming';
-@import '../../assets/theme.scss';
+@import '../../../assets/theme.scss'; //TODO paths
 
 @mixin card-dimensions($width) {
   width: $width;
@@ -18,7 +18,8 @@
   margin: $margin;
   border-width: $thin-border;
 
-  &:hover {
+  &:hover,
+  &.selected {
     margin: $margin - $thick-border + $thin-border;
     border: $thick-border solid mat-color($accent);
     cursor: pointer;

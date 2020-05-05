@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Card } from '../game.models';
+import { Card } from '../../game.models';
 
 @Component({
   selector: 'spf-card',
@@ -8,6 +8,7 @@ import { Card } from '../game.models';
 })
 export class CardComponent implements OnInit {
   @Input() card: Card;
+  @Input() selected: false;
 
   constructor() {}
 

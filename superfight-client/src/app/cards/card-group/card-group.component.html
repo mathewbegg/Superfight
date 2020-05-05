@@ -1,0 +1,8 @@
+<div class="card-group">
+  <spf-card
+    *ngFor="let card of cards"
+    [card]="card"
+    [selected]="card === selectedCard"
+    (click)="selectCard(card)"
+  ></spf-card>
+</div>
