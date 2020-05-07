@@ -13,8 +13,11 @@ var db;
 var playerList = [];
 var masterGameState = {};
 var matchupList;
-const SELECTING = 'SELECTING';
-const DEBATE = 'DEBATE';
+const SELECTING_PHASE = 'SELECTING';
+const DEBATE_PHASE = 'DEBATE';
+const VOTING_PHASE = 'VOTING';
+const START_VOTING_ACTION = 'START_VOTING';
+const FIGHTER_SELECTION_ACTION = 'FIGHTER_SELECTION';
 
 MongoClient.connect(
   mongoConnectionString,
@@ -120,11 +123,18 @@ function updateClients() {
 function parseClientPackage(socket, package) {
   const wrongStateMessage = `socket ${socket.id} submitted a package invalid with the current gameState`;
   switch (package.action) {
-    case 'FIGHTER_SELECTION':
+    case FIGHTER_SELECTION_ACTION:
       if (validateSelectionPackage(socket, package)) {
         selectFighter(socket, package);
       } else {
         console.error(wrongStateMessage);
+      }
+      break;
+    case START_VOTING_ACTION:
+      if (playerList[0].id === socket.id) {
+        startVoting();
+      } else {
+        console.error('Only the leader can start the voting phase');
       }
       break;
     default:
@@ -202,6 +212,13 @@ function sendFightSelectionOptions() {
   io.to(masterGameState.phase.playerB.id).emit('updatePrivateState', packageB);
 }
 
+function startVoting() {
+  if (masterGameState.phase.phaseName === DEBATE_PHASE) {
+    masterGameState.phase.phaseName = VOTING_PHASE;
+    updateClients();
+  }
+}
+
 async function shuffleWhiteDeck() {
   masterGameState.whiteDeck = _.shuffle(
     await db.collection('whiteCatalogue').find().toArray()
@@ -255,7 +272,7 @@ function findMatchup() {
 
 function generateSelectingPhase(playerA, playerB) {
   return {
-    phaseName: SELECTING,
+    phaseName: SELECTING_PHASE,
     playerA: playerA,
     playerB: playerB,
   };
@@ -271,8 +288,8 @@ function advanceToDebatePhase() {
   console.log(
     `${masterGameState.phase.playerB.name} selects ${fighterB[0].text} ${fighterB[1].text} ${fighterB[2].text}`
   );
-  if (phase.phaseName === SELECTING && phase.playerA && phase.playerB) {
-    phase.phaseName = DEBATE;
+  if (phase.phaseName === SELECTING_PHASE && phase.playerA && phase.playerB) {
+    phase.phaseName = DEBATE_PHASE;
     phase.playerA.votes = 0;
     phase.playerB.votes = 0;
     updateClients();

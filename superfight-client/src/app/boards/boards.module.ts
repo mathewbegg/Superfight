@@ -4,10 +4,11 @@ import { SelectingBoardComponent } from './selecting-board/selecting-board.compo
 import { CardsModule } from '../cards/cards.module';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { DebateBoardComponent } from './debate-board/debate-board.component';
 
 @NgModule({
-  declarations: [SelectingBoardComponent],
+  declarations: [SelectingBoardComponent, DebateBoardComponent],
   imports: [CommonModule, CardsModule, MatButtonModule, MatIconModule],
-  exports: [SelectingBoardComponent],
+  exports: [SelectingBoardComponent, DebateBoardComponent],
 })
 export class BoardsModule {}

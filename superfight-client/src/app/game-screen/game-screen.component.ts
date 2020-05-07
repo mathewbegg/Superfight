@@ -7,6 +7,7 @@ import {
   Card,
   SelectionPair,
   packageFighterSelection,
+  packageStartVoting,
 } from '../game.models';
 
 @Component({
@@ -20,6 +21,7 @@ export class GameScreenComponent implements OnInit {
   playerList: Player[] = [];
   cards = [];
   isLeader = false;
+  isPlaying = false;
   gameState: any;
   privateState: any;
 
@@ -39,11 +41,17 @@ export class GameScreenComponent implements OnInit {
     this.socket.on('updatePublicState', (gameState) => {
       console.log('public state: ', gameState);
       this.gameState = gameState;
+      this.updateIsPlaying();
     });
     this.socket.on('updatePrivateState', (privateState) => {
       console.log('private state: ', privateState);
       this.privateState = privateState;
+      this.updateIsPlaying();
     });
+  }
+
+  startVoting() {
+    this.socket.emit('clientPackage', new packageStartVoting());
   }
 
   leaveGame() {
@@ -59,11 +67,10 @@ export class GameScreenComponent implements OnInit {
     this.socket.emit('clientPackage', new packageFighterSelection(selection));
   }
 
-  get isPlaying() {
-    return (
+  updateIsPlaying() {
+    this.isPlaying =
       this?.gameState?.phase?.playerA.id === this.id ||
-      this?.gameState?.phase?.playerB.id
-    );
+      this?.gameState?.phase?.playerB.id === this.id;
   }
 
   get phaseName() {

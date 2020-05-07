@@ -7,6 +7,7 @@ export enum PhaseName {
 export enum PlayerAction {
   FIGHTER_SELECTION = 'FIGHTER_SELECTION',
   PLAYER_VOTE = 'PLAYER_VOTE',
+  START_VOTING = 'START_VOTING',
 }
 
 export enum CardColor {
@@ -32,6 +33,13 @@ export class packageFighterSelection implements packageToServer {
     this.payload = payload;
   }
 }
+
+export class packageStartVoting implements packageToServer {
+  action = PlayerAction.START_VOTING;
+  payload: null;
+}
+
+export interface Fighter {}
 
 export interface SelectionPair {
   white: Card;
