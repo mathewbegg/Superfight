@@ -1,7 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 import { UserStateService } from '../user-state.service';
-import { GameState, Player, Card, SelectionPair } from '../game.models';
+import {
+  GameState,
+  Player,
+  Card,
+  SelectionPair,
+  packageFighterSelection,
+} from '../game.models';
 
 @Component({
   selector: 'spf-game-screen',
@@ -31,11 +37,11 @@ export class GameScreenComponent implements OnInit {
       )[0]?.isLeader;
     });
     this.socket.on('updatePublicState', (gameState) => {
-      console.log(gameState);
+      console.log('public state: ', gameState);
       this.gameState = gameState;
     });
     this.socket.on('updatePrivateState', (privateState) => {
-      console.log(privateState);
+      console.log('private state: ', privateState);
       this.privateState = privateState;
     });
   }
@@ -50,9 +56,7 @@ export class GameScreenComponent implements OnInit {
   }
 
   selectFighter(selection: SelectionPair) {
-    console.log(selection.white);
-    console.log(selection.black);
-    this.socket.emit('selectFighter', selection);
+    this.socket.emit('clientPackage', new packageFighterSelection(selection));
   }
 
   get isPlaying() {

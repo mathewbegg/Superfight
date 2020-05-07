@@ -28,13 +28,11 @@
 </div>
 <div class="cards-area">
   <spf-card-group
-    [selectable]="!lockedIn"
     [cards]="whiteOptions"
     [locked]="lockedIn"
     (cardSelected)="selectWhite($event)"
   ></spf-card-group>
   <spf-card-group
-    [selectable]="!lockedIn"
     [cards]="blackOptions"
     [locked]="lockedIn"
     (cardSelected)="selectBlack($event)"

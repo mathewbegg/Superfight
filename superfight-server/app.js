@@ -13,6 +13,8 @@ var db;
 var playerList = [];
 var masterGameState = {};
 var matchupList;
+const SELECTING = 'SELECTING';
+const DEBATE = 'DEBATE';
 
 MongoClient.connect(
   mongoConnectionString,
@@ -54,10 +56,8 @@ function userConnect(socket) {
     }
   });
 
-  socket.on('selectFighter', (selection) => {
-    console.log(
-      `${playerId} selected ${selection.white.text} ${selection.black.text}`
-    );
+  socket.on('clientPackage', (package) => {
+    parseClientPackage(socket, package);
   });
 }
 
@@ -113,67 +113,93 @@ function updateClients() {
 
   io.emit('updatePublicState', updatePackage);
   if (phase.phaseName === 'SELECTING') {
-    if (masterGameState.whiteDeck.length < 6) {
-      shuffleWhiteDeck();
-    }
-    if (masterGameState.blackDeck.length < 6) {
-      shuffleBlackDeck();
-    }
-    const packageA = {
-      whiteOptions: [
-        masterGameState.whiteDeck.pop(),
-        masterGameState.whiteDeck.pop(),
-        masterGameState.whiteDeck.pop(),
-      ],
-      blackOptions: [
-        masterGameState.blackDeck.pop(),
-        masterGameState.blackDeck.pop(),
-        masterGameState.blackDeck.pop(),
-      ],
-    };
-    const packageB = {
-      whiteOptions: [
-        masterGameState.whiteDeck.pop(),
-        masterGameState.whiteDeck.pop(),
-        masterGameState.whiteDeck.pop(),
-      ],
-      blackOptions: [
-        masterGameState.blackDeck.pop(),
-        masterGameState.blackDeck.pop(),
-        masterGameState.blackDeck.pop(),
-      ],
-    };
-    let readyA = false;
-    let readyB = false;
-    io.to(phase.playerA.id).emit('updatePrivateState', packageA);
-    io.to(phase.playerB.id).emit('updatePrivateState', packageB);
-    // io.to(phase.playerA.id).on('selectFighter', (selection) => {
-    //   masterGameState.playerASelection = selection;
-    //   readyA = true;
-    //   if (readyB) {
-    //     moveToDebate();
-    //   }
-    // });
-    // io.
-    // io.to(phase.playerB.id).on('selectFighter', (selection) => {
-    //   masterGameState.playerBSelection = selection;
-    //   readyB = true;
-    //   if (readyA) {
-    //     moveToDebate();
-    //   }
-    // });
+    sendFightSelectionOptions();
   }
 }
 
-function moveToDebate() {
-  //TODO add third card, implement full debate stage
-  console.log('Moving to debate phase');
-  console.log(
-    `${masterGameState.phase.playerA.name} selects ${masterGameState.playerASelection.white.text} ${masterGameState.playerASelection.black.text}`
-  );
-  console.log(
-    `${masterGameState.phase.playerB.name} selects ${masterGameState.playerBSelection.white.text} ${masterGameState.playerBSelection.black.text}`
-  );
+function parseClientPackage(socket, package) {
+  const wrongStateMessage = `socket ${socket.id} submitted a package invalid with the current gameState`;
+  switch (package.action) {
+    case 'FIGHTER_SELECTION':
+      if (validateSelectionPackage(socket, package)) {
+        selectFighter(socket, package);
+      } else {
+        console.error(wrongStateMessage);
+      }
+      break;
+    default:
+      console.error(
+        `socket ${socket.id} submitted a package with an invalid action`
+      );
+  }
+}
+
+function validateSelectionPackage(socket, package) {
+  const isPlayersTurn =
+    socket.id === masterGameState.phase.playerA.id ||
+    socket.id === masterGameState.phase.playerB.id;
+  const hasProperPayload = !!package.payload.white && !!package.payload.black;
+  return isPlayersTurn && hasProperPayload;
+}
+
+function selectFighter(socket, package) {
+  const playerA = masterGameState.phase.playerA;
+  const playerB = masterGameState.phase.playerB;
+  if (playerA.id === socket.id) {
+    playerA.selectedFighter = [
+      package.payload.white,
+      package.payload.black,
+      drawBlackCard(),
+    ];
+    if (playerB.selectedFighter) {
+      advanceToDebatePhase();
+    }
+  }
+  if (playerB.id === socket.id) {
+    playerB.selectedFighter = [
+      package.payload.white,
+      package.payload.black,
+      drawBlackCard(),
+    ];
+    if (playerA.selectedFighter) {
+      advanceToDebatePhase();
+    }
+  }
+}
+
+function sendFightSelectionOptions() {
+  if (masterGameState.whiteDeck.length < 6) {
+    shuffleWhiteDeck();
+  }
+  if (masterGameState.blackDeck.length < 6) {
+    shuffleBlackDeck();
+  }
+  const packageA = {
+    whiteOptions: [
+      masterGameState.whiteDeck.pop(),
+      masterGameState.whiteDeck.pop(),
+      masterGameState.whiteDeck.pop(),
+    ],
+    blackOptions: [
+      masterGameState.blackDeck.pop(),
+      masterGameState.blackDeck.pop(),
+      masterGameState.blackDeck.pop(),
+    ],
+  };
+  const packageB = {
+    whiteOptions: [
+      masterGameState.whiteDeck.pop(),
+      masterGameState.whiteDeck.pop(),
+      masterGameState.whiteDeck.pop(),
+    ],
+    blackOptions: [
+      masterGameState.blackDeck.pop(),
+      masterGameState.blackDeck.pop(),
+      masterGameState.blackDeck.pop(),
+    ],
+  };
+  io.to(masterGameState.phase.playerA.id).emit('updatePrivateState', packageA);
+  io.to(masterGameState.phase.playerB.id).emit('updatePrivateState', packageB);
 }
 
 async function shuffleWhiteDeck() {
@@ -186,6 +212,10 @@ async function shuffleBlackDeck() {
   masterGameState.blackDeck = _.shuffle(
     await db.collection('blackCatalogue').find().toArray()
   );
+}
+
+function drawBlackCard() {
+  return masterGameState.blackDeck.pop();
 }
 
 /**
@@ -225,10 +255,30 @@ function findMatchup() {
 
 function generateSelectingPhase(playerA, playerB) {
   return {
-    phaseName: 'SELECTING',
+    phaseName: SELECTING,
     playerA: playerA,
     playerB: playerB,
   };
+}
+
+function advanceToDebatePhase() {
+  const phase = masterGameState.phase;
+  const fighterA = phase.playerA.selectedFighter;
+  const fighterB = phase.playerB.selectedFighter;
+  console.log(
+    `${masterGameState.phase.playerA.name} selects ${fighterA[0].text} ${fighterA[1].text} ${fighterA[2].text}`
+  );
+  console.log(
+    `${masterGameState.phase.playerB.name} selects ${fighterB[0].text} ${fighterB[1].text} ${fighterB[2].text}`
+  );
+  if (phase.phaseName === SELECTING && phase.playerA && phase.playerB) {
+    phase.phaseName = DEBATE;
+    phase.playerA.votes = 0;
+    phase.playerB.votes = 0;
+    updateClients();
+  } else {
+    console.error('Insufficient conditions to move to debate stage');
+  }
 }
 
 function generateFreshScoreboard(players) {
