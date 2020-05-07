@@ -29,7 +29,7 @@
   <mat-sidenav-content>
     <div class="main-content">
       <ng-container *ngIf="gameState" [ngSwitch]="gameState.phase.phaseName">
-        <div *ngSwitchCase="'SELECTING'">
+        <ng-container *ngSwitchCase="'SELECTING'">
           <mat-toolbar>
             <mat-toolbar-row class="matchup-header">
               <span>{{ playerA.name }}</span>
@@ -46,8 +46,8 @@
             [blackOptions]="privateState.blackOptions"
             (selection)="selectFighter($event)"
           ></spf-selecting-board>
-        </div>
-        <div *ngSwitchCase="'DEBATE'">
+        </ng-container>
+        <ng-container *ngSwitchCase="'DEBATE'">
           <mat-toolbar class="matchup-header"
             ><div></div>
             <span>DEBATE</span>
@@ -62,8 +62,8 @@
             [fighterB]="gameState.phase.playerB.selectedFighter"
             [votable]="false"
           ></spf-debate-board>
-        </div>
-        <div *ngSwitchCase="'VOTING'">
+        </ng-container>
+        <ng-container *ngSwitchCase="'VOTING'">
           <mat-toolbar class="matchup-header">
             <span>VOTE NOW</span>
           </mat-toolbar>
@@ -72,7 +72,7 @@
             [fighterB]="gameState.phase.playerB.selectedFighter"
             [votable]="!isPlaying"
           ></spf-debate-board>
-        </div>
+        </ng-container>
       </ng-container>
     </div>
   </mat-sidenav-content>

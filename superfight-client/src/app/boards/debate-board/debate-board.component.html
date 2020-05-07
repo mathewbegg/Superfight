@@ -1,11 +1,14 @@
 <spf-card-group
   [cards]="fighterA"
   [locked]="true"
-  [class.votable]="votable"
+  [ngClass]="{ votable: votable, 'current-vote': currentVote === 'A' }"
+  (click)="setVote('A')"
 ></spf-card-group>
 <div class="divider">VS</div>
 <spf-card-group
   [cards]="fighterB"
   [locked]="true"
-  [class.votable]="votable"
+  [ngClass]="{ votable: votable, 'current-vote': currentVote === 'B' }"
+  (click)="setVote('B')"
 ></spf-card-group>
+<button *ngIf="votable" mat-raised-button color="accent">Cast Vote</button>
