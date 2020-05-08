@@ -30,48 +30,58 @@
     <div class="main-content">
       <ng-container *ngIf="gameState" [ngSwitch]="gameState.phase.phaseName">
         <ng-container *ngSwitchCase="'SELECTING'">
-          <mat-toolbar>
-            <mat-toolbar-row class="matchup-header">
-              <span>{{ playerA.name }}</span>
-              <strong>vs</strong>
-              <span>{{ playerB.name }}</span>
-            </mat-toolbar-row>
-            <mat-toolbar-row class="phase-prompt">
-              Players select your fighter
-            </mat-toolbar-row>
-          </mat-toolbar>
           <spf-selecting-board
             *ngIf="isPlaying && privateState"
+            class="board"
             [whiteOptions]="privateState.whiteOptions"
             [blackOptions]="privateState.blackOptions"
             (selection)="selectFighter($event)"
           ></spf-selecting-board>
+          <div class="right-panel">
+            <div class="matchup-header">
+              <div class="matchup-header-row">{{ playerA.name }}</div>
+              <strong class="matchup-header-vs">VS</strong>
+              <div class="matchup-header-row">{{ playerB.name }}</div>
+            </div>
+            <div class="right-panel-info">
+              {{
+                isPlaying
+                  ? 'SELECT YOUR FIGHTER'
+                  : 'WAITING FOR PLAYERS TO SELECT THEIR FIGHTERS'
+              }}
+            </div>
+            <div class="bottom-spacer"></div>
+          </div>
         </ng-container>
         <ng-container *ngSwitchCase="'DEBATE'">
-          <mat-toolbar class="matchup-header"
-            ><div></div>
-            <span>DEBATE</span>
-            <div>
-              <button mat-button *ngIf="isLeader" (click)="startVoting()">
-                Vote Now
-              </button>
-            </div></mat-toolbar
-          >
           <spf-debate-board
+            class="board"
             [fighterA]="gameState.phase.playerA.selectedFighter"
             [fighterB]="gameState.phase.playerB.selectedFighter"
             [votable]="false"
           ></spf-debate-board>
+          <div class="right-panel">
+            <div>DEBATE</div>
+            <button
+              mat-raised-button
+              color="accent"
+              *ngIf="isLeader"
+              (click)="startVoting()"
+            >
+              Vote Now
+            </button>
+          </div>
         </ng-container>
         <ng-container *ngSwitchCase="'VOTING'">
-          <mat-toolbar class="matchup-header">
-            <span>VOTE NOW</span>
-          </mat-toolbar>
           <spf-debate-board
+            class="board"
             [fighterA]="gameState.phase.playerA.selectedFighter"
             [fighterB]="gameState.phase.playerB.selectedFighter"
             [votable]="!isPlaying"
           ></spf-debate-board>
+          <div class="right-panel">
+            <div>VOTE NOW</div>
+          </div>
         </ng-container>
       </ng-container>
     </div>

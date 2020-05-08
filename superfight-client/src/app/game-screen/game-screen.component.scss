@@ -37,13 +37,41 @@ mat-sidenav {
 
 .main-content {
   width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: stretch;
 }
 
-.matchup-header {
-  height: 48px;
+.right-panel {
+  padding: 12px 24px;
+  display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  strong {
-    margin: 0 25px;
+  text-align: center;
+  background-color: mat-color($primary, 300);
+  .matchup-header {
+    font-size: 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .matchup-header-row {
+      line-height: 48px;
+      margin: 12px 0;
+      font-weight: 400;
+      color: mat-color($primary);
+    }
+    .matchup-header-vs {
+      font-size: 24px;
+      line-height: 24px;
+    }
+  }
+  .right-panel-info {
+    font-size: 24px;
+    line-height: 24px;
+    font-weight: 600;
+  }
+  .bottom-spacer {
+    height: 180px;
   }
 }
 
