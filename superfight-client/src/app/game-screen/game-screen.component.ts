@@ -86,4 +86,6 @@ export class GameScreenComponent implements OnInit {
   }
 
   //TODO 'are you sure?' and info dialogs
+  //TODO Activity Feed
+  //TODO pick card from your hand cards.
 }
