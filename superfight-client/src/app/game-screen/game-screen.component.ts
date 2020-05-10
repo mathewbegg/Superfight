@@ -26,8 +26,4 @@ export class GameScreenComponent extends BaseUiStateComponent {
   newGame() {
     this.gameManager.newGame();
   }
-
-  //TODO 'are you sure?' and info dialogs
-  //TODO Activity Feed
-  //TODO pick card from your hand cards.
 }
