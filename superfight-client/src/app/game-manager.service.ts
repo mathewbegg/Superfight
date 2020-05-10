@@ -11,8 +11,9 @@ import {
   UiState,
   BLANK_UI_STATE,
   GamePhase,
-} from './game.models';
-import { Observable, of, BehaviorSubject } from 'rxjs';
+  Card,
+} from './models/game.models';
+import { Observable, BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -75,8 +76,37 @@ export class GameManagerService {
     this.socket.emit('newGame');
   }
 
-  selectFighter(selection: SelectionPair) {
-    this.socket.emit('clientPackage', new packageFighterSelection(selection));
+  selectWhiteCard(card: Card) {
+    this.uiState$.next({
+      ...this.uiState$.value,
+      whiteSelection: card,
+    });
+  }
+
+  selectBlackCard(card: Card) {
+    this.uiState$.next({
+      ...this.uiState$.value,
+      blackSelection: card,
+    });
+  }
+
+  lockInFighterSelection() {
+    if (
+      this.uiState$.value.whiteSelection &&
+      this.uiState$.value.blackSelection
+    ) {
+      this.uiState$.next({
+        ...this.uiState$.value,
+        lockedIn: true,
+      });
+      this.socket.emit(
+        'clientPackage',
+        new packageFighterSelection({
+          white: this.uiState$.value.whiteSelection,
+          black: this.uiState$.value.blackSelection,
+        })
+      );
+    }
   }
 
   canActivate(): boolean {

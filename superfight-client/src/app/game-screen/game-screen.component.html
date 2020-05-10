@@ -41,25 +41,7 @@
           <spf-selecting-board
             *ngIf="uiState.isPlaying && uiState.privateState"
             class="board"
-            [whiteOptions]="uiState.privateState.whiteOptions"
-            [blackOptions]="uiState.privateState.blackOptions"
-            (selection)="selectFighter($event)"
           ></spf-selecting-board>
-          <div class="right-panel">
-            <div class="matchup-header">
-              <div class="matchup-header-row">{{ uiState?.playerA?.name }}</div>
-              <strong class="matchup-header-vs">VS</strong>
-              <div class="matchup-header-row">{{ uiState?.playerB?.name }}</div>
-            </div>
-            <div class="right-panel-info">
-              {{
-                uiState.isPlaying
-                  ? 'SELECT YOUR FIGHTER'
-                  : 'WAITING FOR PLAYERS TO SELECT THEIR FIGHTERS'
-              }}
-            </div>
-            <div class="bottom-spacer"></div>
-          </div>
         </ng-container>
         <ng-container *ngSwitchCase="'DEBATE'">
           <spf-debate-board
@@ -68,17 +50,6 @@
             [fighterB]="uiState.gameState.phase.playerB.selectedFighter"
             [votable]="false"
           ></spf-debate-board>
-          <div class="right-panel">
-            <div>DEBATE</div>
-            <button
-              mat-raised-button
-              color="accent"
-              *ngIf="uiState.isLeader"
-              (click)="startVoting()"
-            >
-              Vote Now
-            </button>
-          </div>
         </ng-container>
         <ng-container *ngSwitchCase="'VOTING'">
           <spf-debate-board
@@ -87,9 +58,6 @@
             [fighterB]="uiState.gameState.phase.playerB.selectedFighter"
             [votable]="!uiState.isPlaying"
           ></spf-debate-board>
-          <div class="right-panel">
-            <div>VOTE NOW</div>
-          </div>
         </ng-container>
       </ng-container>
     </div>

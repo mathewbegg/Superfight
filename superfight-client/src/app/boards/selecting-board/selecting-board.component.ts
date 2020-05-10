@@ -1,43 +1,33 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Card, SelectionPair } from '../../game.models';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Card, SelectionPair, UiState } from '../../models/game.models';
+import { GameManagerService } from 'src/app/game-manager.service';
+import { BaseUiStateComponent } from 'src/app/models/base-ui-state.component';
 
 @Component({
   selector: 'spf-selecting-board',
   templateUrl: './selecting-board.component.html',
   styleUrls: ['./selecting-board.component.scss'],
 })
-export class SelectingBoardComponent implements OnInit {
+export class SelectingBoardComponent extends BaseUiStateComponent {
   @Input() blackOptions: Card[];
 
   @Input() whiteOptions: Card[];
 
   @Output() selection = new EventEmitter<SelectionPair>();
 
-  whiteSelection: Card;
-  blackSelection: Card;
-  lockedIn = false;
-
-  constructor() {}
-
-  ngOnInit(): void {}
+  constructor(protected gameManager: GameManagerService) {
+    super(gameManager);
+  }
 
   lockIn() {
-    if (this.whiteSelection && this.blackSelection) {
-      this.selection.emit({
-        white: this.whiteSelection,
-        black: this.blackSelection,
-      });
-      this.lockedIn = true;
-    } else {
-      console.log('You must select both black and white cards to lock in');
-    }
+    this.gameManager.lockInFighterSelection();
   }
 
   selectWhite(card: Card) {
-    this.whiteSelection = card;
+    this.gameManager.selectWhiteCard(card);
   }
 
   selectBlack(card: Card) {
-    this.blackSelection = card;
+    this.gameManager.selectBlackCard(card);
   }
 }

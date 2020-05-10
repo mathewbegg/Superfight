@@ -1,26 +1,27 @@
+<mat-toolbar>Hello</mat-toolbar>
 <div class="cards-area">
   <spf-card
     [blankSlot]="true"
-    [card]="whiteSelection"
+    [card]="uiState.whiteSelection"
     [selectable]="false"
   ></spf-card>
   <spf-card
     [blankSlot]="true"
-    [card]="blackSelection"
+    [card]="uiState.blackSelection"
     [selectable]="false"
   ></spf-card>
   <button
-    *ngIf="whiteSelection && blackSelection"
+    *ngIf="uiState.whiteSelection && uiState.blackSelection"
     mat-raised-button
     color="primary"
     (click)="lockIn()"
-    [disabled]="lockedIn"
+    [disabled]="uiState.lockedIn"
   >
-    <ng-container *ngIf="!lockedIn">
+    <ng-container *ngIf="!uiState.lockedIn">
       <mat-icon>lock_open</mat-icon>
       Lock In
     </ng-container>
-    <ng-container *ngIf="lockedIn">
+    <ng-container *ngIf="uiState.lockedIn">
       <mat-icon>lock</mat-icon>
       Locked In
     </ng-container>
@@ -28,13 +29,13 @@
 </div>
 <div class="cards-area">
   <spf-card-group
-    [cards]="whiteOptions"
-    [locked]="lockedIn"
+    [cards]="uiState.privateState.whiteOptions"
+    [locked]="uiState.lockedIn"
     (cardSelected)="selectWhite($event)"
   ></spf-card-group>
   <spf-card-group
-    [cards]="blackOptions"
-    [locked]="lockedIn"
+    [cards]="uiState.privateState.blackOptions"
+    [locked]="uiState.lockedIn"
     (cardSelected)="selectBlack($event)"
   ></spf-card-group>
 </div>

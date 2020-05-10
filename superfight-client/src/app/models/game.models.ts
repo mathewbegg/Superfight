@@ -89,6 +89,9 @@ export interface UiState {
   privateState: any;
   playerA?: Player;
   playerB?: Player;
+  whiteSelection?: Card;
+  blackSelection?: Card;
+  lockedIn?: boolean;
 }
 
 export interface privatePackage {
