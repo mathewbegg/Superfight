@@ -1,6 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { Socket } from 'ngx-socket-io';
-import { UserStateService } from '../user-state.service';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import {
   GameState,
   Player,
@@ -8,81 +6,50 @@ import {
   SelectionPair,
   packageFighterSelection,
   packageStartVoting,
+  UiState,
+  BLANK_UI_STATE,
 } from '../game.models';
+import { GameManagerService } from '../game-manager.service';
+import { Subject, pipe } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'spf-game-screen',
   templateUrl: './game-screen.component.html',
   styleUrls: ['./game-screen.component.scss'],
 })
-export class GameScreenComponent implements OnInit {
-  name: string;
-  id: string;
-  playerList: Player[] = [];
-  cards = [];
-  isLeader = false;
-  isPlaying = false;
-  gameState: any;
-  privateState: any;
+export class GameScreenComponent implements OnInit, OnDestroy {
+  uiState: UiState;
+  unsubscribe$ = new Subject<void>();
 
-  constructor(private socket: Socket, private userService: UserStateService) {}
+  constructor(private gameManager: GameManagerService) {}
 
   ngOnInit() {
-    this.socket.connect();
-    this.name = this.userService.getName();
-    this.socket.emit('setName', this.name);
-    this.socket.on('listPlayers', (playerList) => {
-      this.id = this.socket.ioSocket.id;
-      this.playerList = playerList;
-      this.isLeader = this.playerList.filter(
-        (player) => player.id === this.id
-      )[0]?.isLeader;
-    });
-    this.socket.on('updatePublicState', (gameState) => {
-      console.log('public state: ', gameState);
-      this.gameState = gameState;
-      this.updateIsPlaying();
-    });
-    this.socket.on('updatePrivateState', (privateState) => {
-      console.log('private state: ', privateState);
-      this.privateState = privateState;
-      this.updateIsPlaying();
-    });
+    this.gameManager
+      .getUiState()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((uiState) => (this.uiState = uiState));
   }
 
   startVoting() {
-    this.socket.emit('clientPackage', new packageStartVoting());
+    this.gameManager.startVoting();
   }
 
   leaveGame() {
-    this.userService.leaveGame();
-    this.socket.disconnect();
+    this.gameManager.leaveGame();
   }
 
   newGame() {
-    this.socket.emit('newGame');
+    this.gameManager.newGame();
   }
 
   selectFighter(selection: SelectionPair) {
-    this.socket.emit('clientPackage', new packageFighterSelection(selection));
+    this.gameManager.selectFighter(selection);
   }
 
-  updateIsPlaying() {
-    this.isPlaying =
-      this?.gameState?.phase?.playerA.id === this.id ||
-      this?.gameState?.phase?.playerB.id === this.id;
-  }
-
-  get phaseName() {
-    return this?.gameState?.phase.phaseName;
-  }
-
-  get playerA() {
-    return this?.gameState?.phase?.playerA;
-  }
-
-  get playerB() {
-    return this?.gameState?.phase?.playerB;
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
   //TODO 'are you sure?' and info dialogs

@@ -15,6 +15,17 @@ export enum CardColor {
   BLACK = 'BLACK',
 }
 
+export const BLANK_UI_STATE: UiState = {
+  name: null,
+  id: null,
+  playerList: null,
+  cards: null,
+  isLeader: null,
+  isPlaying: null,
+  gameState: null,
+  privateState: null,
+};
+
 export interface Card {
   text: string;
   color: string;
@@ -51,6 +62,7 @@ export interface Player {
   name: string;
   isLeader?: boolean;
   votes?: number;
+  selectedFighter?: Card[];
 }
 
 export interface playerScore {
@@ -62,6 +74,21 @@ export interface playerScore {
 export interface GameState {
   phase: GamePhase;
   scoreboard: playerScore[];
+}
+
+export interface PrivateState {}
+
+export interface UiState {
+  name: string;
+  id: string;
+  playerList: Player[];
+  cards: Card[];
+  isLeader: boolean;
+  isPlaying: boolean;
+  gameState: GameState;
+  privateState: any;
+  playerA?: Player;
+  playerB?: Player;
 }
 
 export interface privatePackage {
