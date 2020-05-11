@@ -9,12 +9,6 @@ import { BaseUiStateComponent } from 'src/app/models/base-ui-state.component';
   styleUrls: ['./selecting-board.component.scss'],
 })
 export class SelectingBoardComponent extends BaseUiStateComponent {
-  @Input() blackOptions: Card[];
-
-  @Input() whiteOptions: Card[];
-
-  @Output() selection = new EventEmitter<SelectionPair>();
-
   constructor(protected gameManager: GameManagerService) {
     super(gameManager);
   }

@@ -2,16 +2,12 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Socket } from 'ngx-socket-io';
 import {
-  Player,
   packageStartVoting,
-  SelectionPair,
   packageFighterSelection,
-  GameState,
-  PrivateState,
   UiState,
   BLANK_UI_STATE,
-  GamePhase,
   Card,
+  packageVote,
 } from './models/game.models';
 import { Observable, BehaviorSubject } from 'rxjs';
 
@@ -107,6 +103,10 @@ export class GameManagerService {
         })
       );
     }
+  }
+
+  sendVote(vote: string) {
+    this.socket.emit('clientPackage', new packageVote(vote));
   }
 
   canActivate(): boolean {

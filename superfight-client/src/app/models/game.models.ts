@@ -40,7 +40,7 @@ export class packageFighterSelection implements packageToServer {
   action = PlayerAction.FIGHTER_SELECTION;
   payload: SelectionPair;
 
-  constructor(payload) {
+  constructor(payload: SelectionPair) {
     this.payload = payload;
   }
 }
@@ -48,6 +48,15 @@ export class packageFighterSelection implements packageToServer {
 export class packageStartVoting implements packageToServer {
   action = PlayerAction.START_VOTING;
   payload: null;
+}
+
+export class packageVote implements packageToServer {
+  action = PlayerAction.PLAYER_VOTE;
+  payload: string;
+
+  constructor(payload: string) {
+    this.payload = payload;
+  }
 }
 
 export interface Fighter {}

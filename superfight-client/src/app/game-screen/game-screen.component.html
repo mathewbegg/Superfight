@@ -37,27 +37,19 @@
         *ngIf="uiState.gameState"
         [ngSwitch]="uiState.gameState.phase.phaseName"
       >
-        <ng-container *ngSwitchCase="'SELECTING'">
+        <ng-container *ngSwitchCase="SELECTING">
           <spf-selecting-board
             *ngIf="uiState.isPlaying && uiState.privateState"
             class="board"
           ></spf-selecting-board>
         </ng-container>
-        <ng-container *ngSwitchCase="'DEBATE'">
-          <spf-debate-board
-            class="board"
-            [fighterA]="uiState.gameState.phase.playerA.selectedFighter"
-            [fighterB]="uiState.gameState.phase.playerB.selectedFighter"
-            [votable]="false"
-          ></spf-debate-board>
+
+        <ng-container *ngSwitchCase="DEBATING">
+          <spf-debate-board class="board"></spf-debate-board>
         </ng-container>
-        <ng-container *ngSwitchCase="'VOTING'">
-          <spf-debate-board
-            class="board"
-            [fighterA]="uiState.gameState.phase.playerA.selectedFighter"
-            [fighterB]="uiState.gameState.phase.playerB.selectedFighter"
-            [votable]="!uiState.isPlaying"
-          ></spf-debate-board>
+
+        <ng-container *ngSwitchCase="VOTING">
+          <spf-debate-board class="board"></spf-debate-board>
         </ng-container>
       </ng-container>
     </div>

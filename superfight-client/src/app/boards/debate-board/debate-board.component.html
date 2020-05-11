@@ -1,14 +1,24 @@
 <spf-card-group
-  [cards]="fighterA"
+  [cards]="uiState.gameState.phase.playerA.selectedFighter"
   [locked]="true"
   [ngClass]="{ votable: votable, 'current-vote': currentVote === 'A' }"
   (click)="setVote('A')"
 ></spf-card-group>
 <div class="divider">VS</div>
 <spf-card-group
-  [cards]="fighterB"
+  [cards]="uiState.gameState.phase.playerB.selectedFighter"
   [locked]="true"
   [ngClass]="{ votable: votable, 'current-vote': currentVote === 'B' }"
   (click)="setVote('B')"
 ></spf-card-group>
-<button *ngIf="votable" mat-raised-button color="accent">Cast Vote</button>
+<button
+  *ngIf="isLeader && uiState.gameState.phase.phaseName === DEBATING"
+  mat-raised-button
+  color="accent"
+  (click)="startVoting()"
+>
+  Start Voting
+</button>
+<button *ngIf="votable" mat-raised-button color="accent" (click)="castVote()">
+  Cast Vote
+</button>
