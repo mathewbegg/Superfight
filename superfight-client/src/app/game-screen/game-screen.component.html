@@ -38,10 +38,7 @@
         [ngSwitch]="uiState.gameState.phase.phaseName"
       >
         <ng-container *ngSwitchCase="SELECTING">
-          <spf-selecting-board
-            *ngIf="uiState.isPlaying && uiState.privateState"
-            class="board"
-          ></spf-selecting-board>
+          <spf-selecting-board class="board"></spf-selecting-board>
         </ng-container>
 
         <ng-container *ngSwitchCase="DEBATING">

@@ -44,4 +44,14 @@ export class DebateBoardComponent extends BaseUiStateComponent {
   get isLeader(): boolean {
     return this.uiState?.isLeader;
   }
+
+  get bannerMessage(): string {
+    if (this.uiState.gameState.phase.phaseName === this.DEBATING) {
+      return 'DEBATE';
+    } else if (this.votable) {
+      return 'Cast Your Vote';
+    } else {
+      return 'Waiting For Votes';
+    }
+  }
 }

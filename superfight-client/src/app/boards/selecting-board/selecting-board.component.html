@@ -1,41 +1,66 @@
-<mat-toolbar>Hello</mat-toolbar>
-<div class="cards-area">
-  <spf-card
-    [blankSlot]="true"
-    [card]="uiState.whiteSelection"
-    [selectable]="false"
-  ></spf-card>
-  <spf-card
-    [blankSlot]="true"
-    [card]="uiState.blackSelection"
-    [selectable]="false"
-  ></spf-card>
-  <button
-    *ngIf="uiState.whiteSelection && uiState.blackSelection"
-    mat-raised-button
-    color="primary"
-    (click)="lockIn()"
-    [disabled]="uiState.lockedIn"
-  >
-    <ng-container *ngIf="!uiState.lockedIn">
-      <mat-icon>lock_open</mat-icon>
-      Lock In
-    </ng-container>
-    <ng-container *ngIf="uiState.lockedIn">
-      <mat-icon>lock</mat-icon>
-      Locked In
-    </ng-container>
-  </button>
-</div>
-<div class="cards-area">
-  <spf-card-group
-    [cards]="uiState.privateState.whiteOptions"
-    [locked]="uiState.lockedIn"
-    (cardSelected)="selectWhite($event)"
-  ></spf-card-group>
-  <spf-card-group
-    [cards]="uiState.privateState.blackOptions"
-    [locked]="uiState.lockedIn"
-    (cardSelected)="selectBlack($event)"
-  ></spf-card-group>
-</div>
+<ng-container
+  *ngIf="uiState.isPlaying && uiState.privateState; else notPlaying"
+>
+  <div class="banner-message small">
+    You Are Facing
+    {{
+      uiState.id === uiState.gameState.phase.playerA.id
+        ? uiState.gameState.phase.playerB.name
+        : uiState.gameState.phase.playerA.name
+    }}
+  </div>
+  <div class="banner-message">SELECT YOUR FIGHTER</div>
+  <div class="cards-area">
+    <spf-card
+      [blankSlot]="true"
+      [card]="uiState.whiteSelection"
+      [selectable]="false"
+    ></spf-card>
+    <spf-card
+      [blankSlot]="true"
+      [card]="uiState.blackSelection"
+      [selectable]="false"
+    ></spf-card>
+    <button
+      *ngIf="uiState.whiteSelection && uiState.blackSelection"
+      mat-raised-button
+      color="primary"
+      (click)="lockIn()"
+      [disabled]="uiState.lockedIn"
+    >
+      <ng-container *ngIf="!uiState.lockedIn">
+        <mat-icon>lock_open</mat-icon>
+        Lock In
+      </ng-container>
+      <ng-container *ngIf="uiState.lockedIn">
+        <mat-icon>lock</mat-icon>
+        Locked In
+      </ng-container>
+    </button>
+  </div>
+  <div class="cards-area">
+    <spf-card-group
+      [cards]="uiState.privateState.whiteOptions"
+      [locked]="uiState.lockedIn"
+      (cardSelected)="selectWhite($event)"
+    ></spf-card-group>
+    <spf-card-group
+      [cards]="uiState.privateState.blackOptions"
+      [locked]="uiState.lockedIn"
+      (cardSelected)="selectBlack($event)"
+    ></spf-card-group>
+  </div>
+</ng-container>
+
+<ng-template #notPlaying>
+  <div class="waiting-area">
+    <div class="banner-message small">
+      Waiting For Players To Select Their Fighters
+    </div>
+    <div class="matchup-area">
+      <div class="matchup-name">{{ uiState.gameState.phase.playerA.name }}</div>
+      <div class="vs-line">VS</div>
+      <div class="matchup-name">{{ uiState.gameState.phase.playerB.name }}</div>
+    </div>
+  </div>
+</ng-template>

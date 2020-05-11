@@ -27,4 +27,5 @@ export class HomeScreenComponent implements OnInit {
   }
 
   //TODO style home screen
+  //TODO name restrictions
 }
