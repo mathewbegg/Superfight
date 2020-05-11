@@ -2,15 +2,20 @@
   <mat-sidenav mode="side" opened>
     <div class="sidebar-content">
       <div class="sidebar-top-content">
-        <button *ngIf="isLeader" (click)="newGame()" mat-button color="accent">
+        <button
+          *ngIf="uiState.isLeader"
+          (click)="newGame()"
+          mat-button
+          color="accent"
+        >
           New Game
         </button>
         <div class="player-list-title">Players</div>
         <mat-list>
-          <mat-list-item *ngFor="let player of playerList">
+          <mat-list-item *ngFor="let player of uiState.playerList">
             <span
               class="player-list-name"
-              [class.highlighted]="player.id === id"
+              [class.highlighted]="player.id === uiState.id"
               >{{ player.name }}</span
             ><span *ngIf="player.isLeader">&nbsp;(Leader)</span>
           </mat-list-item>
@@ -28,60 +33,20 @@
   </mat-sidenav>
   <mat-sidenav-content>
     <div class="main-content">
-      <ng-container *ngIf="gameState" [ngSwitch]="gameState.phase.phaseName">
-        <ng-container *ngSwitchCase="'SELECTING'">
-          <spf-selecting-board
-            *ngIf="isPlaying && privateState"
-            class="board"
-            [whiteOptions]="privateState.whiteOptions"
-            [blackOptions]="privateState.blackOptions"
-            (selection)="selectFighter($event)"
-          ></spf-selecting-board>
-          <div class="right-panel">
-            <div class="matchup-header">
-              <div class="matchup-header-row">{{ playerA.name }}</div>
-              <strong class="matchup-header-vs">VS</strong>
-              <div class="matchup-header-row">{{ playerB.name }}</div>
-            </div>
-            <div class="right-panel-info">
-              {{
-                isPlaying
-                  ? 'SELECT YOUR FIGHTER'
-                  : 'WAITING FOR PLAYERS TO SELECT THEIR FIGHTERS'
-              }}
-            </div>
-            <div class="bottom-spacer"></div>
-          </div>
+      <ng-container
+        *ngIf="uiState.gameState"
+        [ngSwitch]="uiState.gameState.phase.phaseName"
+      >
+        <ng-container *ngSwitchCase="SELECTING">
+          <spf-selecting-board class="board"></spf-selecting-board>
         </ng-container>
-        <ng-container *ngSwitchCase="'DEBATE'">
-          <spf-debate-board
-            class="board"
-            [fighterA]="gameState.phase.playerA.selectedFighter"
-            [fighterB]="gameState.phase.playerB.selectedFighter"
-            [votable]="false"
-          ></spf-debate-board>
-          <div class="right-panel">
-            <div>DEBATE</div>
-            <button
-              mat-raised-button
-              color="accent"
-              *ngIf="isLeader"
-              (click)="startVoting()"
-            >
-              Vote Now
-            </button>
-          </div>
+
+        <ng-container *ngSwitchCase="DEBATING">
+          <spf-debate-board class="board"></spf-debate-board>
         </ng-container>
-        <ng-container *ngSwitchCase="'VOTING'">
-          <spf-debate-board
-            class="board"
-            [fighterA]="gameState.phase.playerA.selectedFighter"
-            [fighterB]="gameState.phase.playerB.selectedFighter"
-            [votable]="!isPlaying"
-          ></spf-debate-board>
-          <div class="right-panel">
-            <div>VOTE NOW</div>
-          </div>
+
+        <ng-container *ngSwitchCase="VOTING">
+          <spf-debate-board class="board"></spf-debate-board>
         </ng-container>
       </ng-container>
     </div>

@@ -15,6 +15,17 @@ export enum CardColor {
   BLACK = 'BLACK',
 }
 
+export const BLANK_UI_STATE: UiState = {
+  name: null,
+  id: null,
+  playerList: null,
+  cards: null,
+  isLeader: null,
+  isPlaying: null,
+  gameState: null,
+  privateState: null,
+};
+
 export interface Card {
   text: string;
   color: string;
@@ -29,7 +40,7 @@ export class packageFighterSelection implements packageToServer {
   action = PlayerAction.FIGHTER_SELECTION;
   payload: SelectionPair;
 
-  constructor(payload) {
+  constructor(payload: SelectionPair) {
     this.payload = payload;
   }
 }
@@ -37,6 +48,15 @@ export class packageFighterSelection implements packageToServer {
 export class packageStartVoting implements packageToServer {
   action = PlayerAction.START_VOTING;
   payload: null;
+}
+
+export class packageVote implements packageToServer {
+  action = PlayerAction.PLAYER_VOTE;
+  payload: string;
+
+  constructor(payload: string) {
+    this.payload = payload;
+  }
 }
 
 export interface Fighter {}
@@ -51,6 +71,7 @@ export interface Player {
   name: string;
   isLeader?: boolean;
   votes?: number;
+  selectedFighter?: Card[];
 }
 
 export interface playerScore {
@@ -62,6 +83,24 @@ export interface playerScore {
 export interface GameState {
   phase: GamePhase;
   scoreboard: playerScore[];
+}
+
+export interface PrivateState {}
+
+export interface UiState {
+  name: string;
+  id: string;
+  playerList: Player[];
+  cards: Card[];
+  isLeader: boolean;
+  isPlaying: boolean;
+  gameState: GameState;
+  privateState: any;
+  playerA?: Player;
+  playerB?: Player;
+  whiteSelection?: Card;
+  blackSelection?: Card;
+  lockedIn?: boolean;
 }
 
 export interface privatePackage {

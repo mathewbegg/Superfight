@@ -1,91 +1,29 @@
-import { Component, OnInit } from '@angular/core';
-import { Socket } from 'ngx-socket-io';
-import { UserStateService } from '../user-state.service';
-import {
-  GameState,
-  Player,
-  Card,
-  SelectionPair,
-  packageFighterSelection,
-  packageStartVoting,
-} from '../game.models';
+import { Component } from '@angular/core';
+import { SelectionPair, PhaseName } from '../models/game.models';
+import { GameManagerService } from '../game-manager.service';
+import { Subject, pipe } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { BaseUiStateComponent } from '../models/base-ui-state.component';
 
 @Component({
   selector: 'spf-game-screen',
   templateUrl: './game-screen.component.html',
   styleUrls: ['./game-screen.component.scss'],
 })
-export class GameScreenComponent implements OnInit {
-  name: string;
-  id: string;
-  playerList: Player[] = [];
-  cards = [];
-  isLeader = false;
-  isPlaying = false;
-  gameState: any;
-  privateState: any;
+export class GameScreenComponent extends BaseUiStateComponent {
+  SELECTING = PhaseName.SELECTING;
+  DEBATING = PhaseName.DEBATING;
+  VOTING = PhaseName.VOTING;
 
-  constructor(private socket: Socket, private userService: UserStateService) {}
-
-  ngOnInit() {
-    this.socket.connect();
-    this.name = this.userService.getName();
-    this.socket.emit('setName', this.name);
-    this.socket.on('listPlayers', (playerList) => {
-      this.id = this.socket.ioSocket.id;
-      this.playerList = playerList;
-      this.isLeader = this.playerList.filter(
-        (player) => player.id === this.id
-      )[0]?.isLeader;
-    });
-    this.socket.on('updatePublicState', (gameState) => {
-      console.log('public state: ', gameState);
-      this.gameState = gameState;
-      this.updateIsPlaying();
-    });
-    this.socket.on('updatePrivateState', (privateState) => {
-      console.log('private state: ', privateState);
-      this.privateState = privateState;
-      this.updateIsPlaying();
-    });
-  }
-
-  startVoting() {
-    this.socket.emit('clientPackage', new packageStartVoting());
+  constructor(protected gameManager: GameManagerService) {
+    super(gameManager);
   }
 
   leaveGame() {
-    this.userService.leaveGame();
-    this.socket.disconnect();
+    this.gameManager.leaveGame();
   }
 
   newGame() {
-    this.socket.emit('newGame');
+    this.gameManager.newGame();
   }
-
-  selectFighter(selection: SelectionPair) {
-    this.socket.emit('clientPackage', new packageFighterSelection(selection));
-  }
-
-  updateIsPlaying() {
-    this.isPlaying =
-      this?.gameState?.phase?.playerA.id === this.id ||
-      this?.gameState?.phase?.playerB.id === this.id;
-  }
-
-  get phaseName() {
-    return this?.gameState?.phase.phaseName;
-  }
-
-  get playerA() {
-    return this?.gameState?.phase?.playerA;
-  }
-
-  get playerB() {
-    return this?.gameState?.phase?.playerB;
-  }
-
-  //TODO 'are you sure?' and info dialogs
-  //TODO Activity Feed
-  //TODO pick card from your hand cards.
 }

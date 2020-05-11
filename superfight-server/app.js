@@ -14,10 +14,11 @@ var playerList = [];
 var masterGameState = {};
 var matchupList;
 const SELECTING_PHASE = 'SELECTING';
-const DEBATE_PHASE = 'DEBATE';
+const DEBATING_PHASE = 'DEBATING';
 const VOTING_PHASE = 'VOTING';
 const START_VOTING_ACTION = 'START_VOTING';
 const FIGHTER_SELECTION_ACTION = 'FIGHTER_SELECTION';
+const PLAYER_VOTE_ACTION = 'PLAYER_VOTE';
 
 MongoClient.connect(
   mongoConnectionString,
@@ -137,6 +138,9 @@ function parseClientPackage(socket, package) {
         console.error('Only the leader can start the voting phase');
       }
       break;
+    case PLAYER_VOTE_ACTION:
+      playerVote(package.payload);
+      break;
     default:
       console.error(
         `socket ${socket.id} submitted a package with an invalid action`
@@ -213,9 +217,24 @@ function sendFightSelectionOptions() {
 }
 
 function startVoting() {
-  if (masterGameState.phase.phaseName === DEBATE_PHASE) {
+  if (masterGameState.phase.phaseName === DEBATING_PHASE) {
     masterGameState.phase.phaseName = VOTING_PHASE;
     updateClients();
+  }
+}
+
+function playerVote(vote) {
+  if (vote === 'A') {
+    masterGameState.phase.playerA.votes++;
+  } else if (vote === 'B') {
+    masterGameState.phase.playerB.votes++;
+  }
+  if (
+    masterGameState.phase.playerA.votes +
+      masterGameState.phase.playerB.votes ===
+    playerList.length - 2
+  ) {
+    console.log('All Votes In!');
   }
 }
 
@@ -289,7 +308,7 @@ function advanceToDebatePhase() {
     `${masterGameState.phase.playerB.name} selects ${fighterB[0].text} ${fighterB[1].text} ${fighterB[2].text}`
   );
   if (phase.phaseName === SELECTING_PHASE && phase.playerA && phase.playerB) {
-    phase.phaseName = DEBATE_PHASE;
+    phase.phaseName = DEBATING_PHASE;
     phase.playerA.votes = 0;
     phase.playerB.votes = 0;
     updateClients();

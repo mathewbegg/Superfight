@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Card } from '../../game.models';
+import { Card } from '../../models/game.models';
 
 @Component({
   selector: 'spf-card',

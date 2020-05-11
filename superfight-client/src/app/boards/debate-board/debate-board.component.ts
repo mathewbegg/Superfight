@@ -1,21 +1,32 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Card } from 'src/app/game.models';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Card, PhaseName } from 'src/app/models/game.models';
+import { GameManagerService } from 'src/app/game-manager.service';
+import { BaseUiStateComponent } from 'src/app/models/base-ui-state.component';
 
 @Component({
   selector: 'spf-debate-board',
   templateUrl: './debate-board.component.html',
   styleUrls: ['./debate-board.component.scss'],
 })
-export class DebateBoardComponent implements OnInit {
-  @Input() fighterA: Card[];
-  @Input() fighterB: Card[];
-  @Input() votable = false;
-  @Output() vote = new EventEmitter<string>();
+export class DebateBoardComponent extends BaseUiStateComponent {
+  DEBATING = PhaseName.DEBATING;
+  votable: boolean;
   currentVote = '';
 
-  constructor() {}
+  constructor(protected gameManager: GameManagerService) {
+    super(gameManager);
+  }
 
-  ngOnInit(): void {}
+  ngOnInit() {
+    super.ngOnInit();
+    this.votable =
+      this.uiState.gameState.phase.phaseName === PhaseName.VOTING &&
+      !this.uiState?.isPlaying;
+  }
+
+  startVoting() {
+    this.gameManager.startVoting();
+  }
 
   setVote(fighter: string) {
     if (this.votable) {
@@ -23,11 +34,24 @@ export class DebateBoardComponent implements OnInit {
     }
   }
 
-  lockVote() {
-    if (this.currentVote === 'A' || this.currentVote === 'B') {
-      this.vote.emit(this.currentVote);
+  castVote() {
+    if (this.currentVote) {
+      this.votable = false;
+      this.gameManager.sendVote(this.currentVote);
+    }
+  }
+
+  get isLeader(): boolean {
+    return this.uiState?.isLeader;
+  }
+
+  get bannerMessage(): string {
+    if (this.uiState.gameState.phase.phaseName === this.DEBATING) {
+      return 'DEBATE';
+    } else if (this.votable) {
+      return 'Cast Your Vote';
     } else {
-      console.error('you must select a fighter to vote for');
+      return 'Waiting For Votes';
     }
   }
 }

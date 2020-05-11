@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserStateService } from '../user-state.service';
 import * as env from '../../environments/environment';
+import { GameManagerService } from '../game-manager.service';
 
 @Component({
   selector: 'spf-home-screen',
@@ -11,7 +11,7 @@ import * as env from '../../environments/environment';
 export class HomeScreenComponent implements OnInit {
   name = '';
 
-  constructor(private userService: UserStateService) {}
+  constructor(private gameService: GameManagerService) {}
 
   ngOnInit() {
     if (!env.environment.production) {
@@ -22,9 +22,10 @@ export class HomeScreenComponent implements OnInit {
 
   connect() {
     if (this.name.length) {
-      this.userService.connectToGame(this.name);
+      this.gameService.connectToGame(this.name);
     }
   }
 
   //TODO style home screen
+  //TODO name restrictions
 }
