@@ -9,6 +9,7 @@ import {
   Card,
   packageVote,
 } from './models/game.models';
+import { PackageJoinRoom } from '../../../shared-models';
 import { Observable, BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -21,14 +22,21 @@ export class GameManagerService {
 
   constructor(private socket: Socket, private router: Router) {}
 
-  connectToGame(name: string) {
+  connectToGame(name: string, roomName: string) {
     this.uiState$.next({
       ...this.uiState$.value,
       name: name,
     });
     this.router.navigateByUrl('/game');
     this.socket.connect();
-    this.socket.emit('setName', this.uiState$.value.name);
+    this.socket.emit(
+      'joinRoom',
+      new PackageJoinRoom({
+        player: { id: this.socket.ioSocket.id, name: this.uiState$.value.name },
+        roomName: roomName,
+      })
+    );
+    // this.socket.emit('setName', this.uiState$.value.name);
     this.socket.on('listPlayers', (playerList) => {
       this.uiState$.next({
         ...this.uiState$.value,

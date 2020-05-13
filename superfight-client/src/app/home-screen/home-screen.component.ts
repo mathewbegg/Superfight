@@ -10,6 +10,7 @@ import { GameManagerService } from '../game-manager.service';
 })
 export class HomeScreenComponent implements OnInit {
   name = '';
+  roomName = '';
 
   constructor(private gameService: GameManagerService) {}
 
@@ -20,9 +21,9 @@ export class HomeScreenComponent implements OnInit {
     }
   }
 
-  connect() {
+  connectToGame() {
     if (this.name.length) {
-      this.gameService.connectToGame(this.name);
+      this.gameService.connectToGame(this.name, this.roomName);
     }
   }
 
