@@ -14,11 +14,6 @@ export interface Card {
   color: string;
 }
 
-export interface GameRoom {
-  playerList: Player[];
-  gameState: GameState;
-}
-
 export interface Fighter {}
 
 export interface Player {
@@ -26,10 +21,12 @@ export interface Player {
   name: string;
   isLeader?: boolean;
   votes?: number;
+  score?: number;
   selectedFighter?: Card[];
 }
 
-export interface playerScore {
+export interface PlayerScore {
+  //TODO get rid of this?
   name: string;
   id: string;
   score: number;
@@ -37,7 +34,7 @@ export interface playerScore {
 
 export interface GameState {
   phase: GamePhase;
-  scoreboard: playerScore[];
+  scoreboard: PlayerScore[];
 }
 
 export interface PrivateState {}
