@@ -59,8 +59,9 @@ function userConnect(socket: Socket) {
       rooms[roomName].gameState.subscribe((gameState) => {
         io.to(roomName).emit('updatePublicState', gameState);
       });
+      //TODO private states
     }
-    socket.on('clientPackage', (command: CommandToServer) => {
+    socket.on('commandToServer', (command: CommandToServer) => {
       rooms[roomName].parseCommand(player.id, command);
     });
     socket.on('leaveRoom', () => {

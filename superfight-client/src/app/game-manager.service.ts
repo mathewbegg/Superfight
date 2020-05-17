@@ -65,7 +65,7 @@ export class GameManagerService {
   }
 
   startVoting() {
-    this.socket.emit('clientPackage', new CommandStartVoting());
+    this.socket.emit('commandToServer', new CommandStartVoting());
   }
 
   leaveGame() {
@@ -74,7 +74,7 @@ export class GameManagerService {
   }
 
   newGame() {
-    this.socket.emit('clientPackage', new CommandNewGame());
+    this.socket.emit('commandToServer', new CommandNewGame());
   }
 
   selectWhiteCard(card: Card) {
@@ -101,7 +101,7 @@ export class GameManagerService {
         lockedIn: true,
       });
       this.socket.emit(
-        'clientPackage',
+        'commandToServer',
         new CommandFighterSelection({
           white: this.uiState$.value.whiteSelection,
           black: this.uiState$.value.blackSelection,
@@ -111,7 +111,7 @@ export class GameManagerService {
   }
 
   sendVote(vote: string) {
-    this.socket.emit('clientPackage', new CommandVote(vote));
+    this.socket.emit('commandToServer', new CommandVote(vote));
   }
 
   canActivate(): boolean {
