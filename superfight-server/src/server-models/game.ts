@@ -1,29 +1,20 @@
-import {
-  Player,
-  Card,
-  PlayerScore,
-  GameState,
-  PhaseName,
-} from '../../../shared-models';
+import { Player, Card, GameState, PhaseName } from '../../../shared-models';
 import { Deck } from './deck';
+import { BehaviorSubject } from 'rxjs';
 
 export class SuperfightGame {
   private roomName: string;
-  private playerList: Player[];
+  private playerList: Player[] = [];
   private whiteDeck: Deck;
   private blackDeck: Deck;
   private phaseName: PhaseName;
   private playerA: Player;
   private playerB: Player;
+  gameState = new BehaviorSubject<GameState>(null);
 
-  constructor(
-    roomName: string,
-    whiteCards: Card[],
-    blackCards: Card[],
-    initialPlayerList: Player[] = []
-  ) {
+  constructor(roomName: string, whiteCards: Card[], blackCards: Card[]) {
     this.roomName = roomName;
-    this.playerList = initialPlayerList;
+    this.phaseName = PhaseName.WAITING;
     this.clearScores();
 
     this.whiteDeck = new Deck(whiteCards, false);
@@ -38,22 +29,41 @@ export class SuperfightGame {
       this.phaseName = PhaseName.SELECTING;
       this.playerA = this.playerList[0];
       this.playerB = this.playerList[1];
+      this.updateGameState();
     } else {
       console.error('Cannot start a game with fewer than 3 players.');
     }
   }
 
-  getGameState(): GameState {
+  updateGameState() {
+    this.gameState.next(this.generateGameState());
+  }
+
+  generateGameState(): GameState {
     return {
       phase: {
         phaseName: this.phaseName,
         playerA: this.playerA,
         playerB: this.playerB,
       },
-      scoreboard: this.playerList.map((player) => {
-        return { id: player.id, name: player.name, score: player.score || 0 };
+      playerList: this.playerList.map((player) => {
+        return { ...player, score: player.score || 0 };
       }),
     };
+  }
+
+  addPlayer(player: Player) {
+    this.playerList.push(player);
+    this.playerList[0].isLeader = true;
+    this.updateGameState();
+  }
+
+  removePlayer(player: Player) {
+    this.playerList = this.playerList.filter((p) => p.id !== player.id);
+    if (this.playerList.length) {
+      this.playerList[0].isLeader = true;
+    }
+    this.updateGameState();
   }
 
   getPlayerList(): Player[] {
@@ -64,5 +74,6 @@ export class SuperfightGame {
     this.playerList = this.playerList.map((player) => {
       return { ...player, score: 0 };
     });
+    this.updateGameState();
   }
 }

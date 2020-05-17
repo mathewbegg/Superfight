@@ -4,11 +4,14 @@ import { Socket } from 'ngx-socket-io';
 import {
   packageStartVoting,
   packageFighterSelection,
-  UiState,
-  BLANK_UI_STATE,
   Card,
   packageVote,
-} from './models/game.models';
+  GameState,
+  PhaseName,
+  Player,
+  GamePhase,
+} from '../../../shared-models';
+import { UiState, BLANK_UI_STATE } from './models/game.models';
 import { PackageJoinRoom } from '../../../shared-models';
 import { Observable, BehaviorSubject } from 'rxjs';
 
@@ -26,6 +29,7 @@ export class GameManagerService {
     this.uiState$.next({
       ...this.uiState$.value,
       name: name,
+      id: this.socket.ioSocket.id,
     });
     this.router.navigateByUrl('/game');
     this.socket.connect();
@@ -36,21 +40,14 @@ export class GameManagerService {
         roomName: roomName,
       })
     );
-    // this.socket.emit('setName', this.uiState$.value.name);
-    this.socket.on('listPlayers', (playerList) => {
-      this.uiState$.next({
-        ...this.uiState$.value,
-        playerList: playerList,
-        id: this.socket.ioSocket.id,
-        isLeader: this.checkIfLeader(),
-      });
-    });
-    this.socket.on('updatePublicState', (gameState) => {
+    this.socket.on('updatePublicState', (gameState: GameState) => {
       console.log('public state: ', gameState);
       this.uiState$.next({
         ...this.uiState$.value,
         gameState: gameState,
-        isPlaying: this.checkIfPlaying(),
+        playerList: gameState.playerList, //TODO move ui playerList into gameState?
+        isLeader: this.checkIfLeader(gameState.playerList),
+        isPlaying: this.checkIfPlaying(gameState.phase),
       });
     });
     this.socket.on('updatePrivateState', (privateState) => {
@@ -58,7 +55,6 @@ export class GameManagerService {
       this.uiState$.next({
         ...this.uiState$.value,
         privateState: privateState,
-        isPlaying: this.checkIfPlaying(),
       });
     });
   }
@@ -73,7 +69,7 @@ export class GameManagerService {
 
   leaveGame() {
     this.router.navigateByUrl('');
-    this.socket.disconnect();
+    this.socket.emit('leaveRoom');
   }
 
   newGame() {
@@ -125,20 +121,19 @@ export class GameManagerService {
     return true;
   }
 
-  checkIfLeader() {
-    return this.uiState$.value?.playerList?.filter(
-      (player) => player.id === this.uiState$.value.id
-    )[0]?.isLeader;
+  checkIfLeader(playerList: Player[]) {
+    return (
+      playerList.filter((player) => player.id === this.uiState$.value.id)[0]
+        ?.isLeader || false
+    );
   }
 
-  checkIfPlaying() {
-    let phase;
-    if ((phase = this.uiState$.value?.gameState?.phase)) {
-      return (
-        phase.playerA.id === this.uiState$.value.id ||
-        phase.playerB.id === this.uiState$.value.id
-      );
-    }
+  checkIfPlaying(phase: GamePhase) {
+    return (
+      phase?.phaseName !== PhaseName.WAITING &&
+      (phase?.playerA?.id === this.uiState$.value.id ||
+        phase?.playerB?.id === this.uiState$.value.id)
+    );
   }
 }
 

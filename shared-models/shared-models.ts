@@ -1,4 +1,5 @@
 export enum PhaseName {
+  WAITING = 'WAITING',
   SELECTING = 'SELECTING',
   DEBATING = 'DEBATING',
   VOTING = 'VOTING',
@@ -25,16 +26,9 @@ export interface Player {
   selectedFighter?: Card[];
 }
 
-export interface PlayerScore {
-  //TODO get rid of this?
-  name: string;
-  id: string;
-  score: number;
-}
-
 export interface GameState {
   phase: GamePhase;
-  scoreboard: PlayerScore[];
+  playerList: Player[];
 }
 
 export interface PrivateState {}
@@ -48,6 +42,10 @@ export interface GamePhase {
   phaseName: PhaseName;
   playerA: Player;
   playerB: Player;
+}
+
+export interface WaitingPhase extends GamePhase {
+  phaseName: PhaseName.WAITING;
 }
 
 export interface SelectingPhase extends GamePhase {
