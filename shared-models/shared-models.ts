@@ -31,7 +31,10 @@ export interface GameState {
   playerList: Player[];
 }
 
-export interface PrivateState {}
+export interface PrivateState {
+  playerId: string;
+  payload: any;
+}
 
 export interface privatePackage {
   whiteOptions: Card[];

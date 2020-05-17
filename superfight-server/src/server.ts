@@ -3,7 +3,13 @@ import { Server } from 'http';
 import { MongoClient, Db } from 'mongodb';
 import { Socket } from 'socket.io';
 import { RoomList, AllPlayersList } from './server-models';
-import { CommandJoinRoom, Card, CommandToServer } from '../../shared-models';
+import {
+  CommandJoinRoom,
+  Card,
+  CommandToServer,
+  PrivateState,
+  GameState,
+} from '../../shared-models';
 import { SuperfightGame } from './server-models/game';
 
 const mongoConnectionString = 'mongodb://localhost:27017';
@@ -56,10 +62,17 @@ function userConnect(socket: Socket) {
       rooms[roomName].addPlayer(player);
       allPlayers[player.id] = roomName;
       console.log(`${player.name}-${player.id} created room: ${roomName}`);
-      rooms[roomName].gameState.subscribe((gameState) => {
+      rooms[roomName].gameState.subscribe((gameState: GameState) => {
         io.to(roomName).emit('updatePublicState', gameState);
       });
-      //TODO private states
+      rooms[roomName].privateState.subscribe((privateState: PrivateState) => {
+        if (privateState?.playerId) {
+          io.to(privateState.playerId).emit(
+            'updatePrivateState',
+            privateState.payload
+          );
+        }
+      });
     }
     socket.on('commandToServer', (command: CommandToServer) => {
       rooms[roomName].parseCommand(player.id, command);
@@ -76,5 +89,5 @@ async function fetchWhiteCatalogue() {
 }
 
 async function fetchBlackCatalogue() {
-  blackCatalogue = await db.collection('whiteCatalogue').find().toArray();
+  blackCatalogue = await db.collection('blackCatalogue').find().toArray();
 }

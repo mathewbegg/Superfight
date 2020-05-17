@@ -5,6 +5,7 @@ import {
   PhaseName,
   CommandToServer,
   PlayerAction,
+  PrivateState,
 } from '../../../shared-models';
 import { Deck } from './deck';
 import { BehaviorSubject } from 'rxjs';
@@ -18,6 +19,7 @@ export class SuperfightGame {
   private playerA: Player;
   private playerB: Player;
   gameState = new BehaviorSubject<GameState>(null);
+  privateState = new BehaviorSubject<PrivateState>(null);
 
   constructor(roomName: string, whiteCards: Card[], blackCards: Card[]) {
     this.roomName = roomName;
@@ -33,10 +35,7 @@ export class SuperfightGame {
       this.clearScores();
       this.whiteDeck.shuffle();
       this.blackDeck.shuffle();
-      this.phaseName = PhaseName.SELECTING;
-      this.playerA = this.playerList[0];
-      this.playerB = this.playerList[1];
-      this.updateGameState();
+      this.advanceToSelectingPhase();
     } else {
       this.gameLog('ERROR', 'Cannot start a game with fewer than 3 players.');
     }
@@ -59,6 +58,39 @@ export class SuperfightGame {
     };
   }
 
+  updatePrivateState() {
+    this.privateState.next({
+      playerId: this.playerA.id,
+      payload: {
+        whiteOptions: [
+          this.whiteDeck.drawCard(),
+          this.whiteDeck.drawCard(),
+          this.whiteDeck.drawCard(),
+        ],
+        blackOptions: [
+          this.blackDeck.drawCard(),
+          this.blackDeck.drawCard(),
+          this.blackDeck.drawCard(),
+        ],
+      },
+    });
+    this.privateState.next({
+      playerId: this.playerB.id,
+      payload: {
+        whiteOptions: [
+          this.whiteDeck.drawCard(),
+          this.whiteDeck.drawCard(),
+          this.whiteDeck.drawCard(),
+        ],
+        blackOptions: [
+          this.blackDeck.drawCard(),
+          this.blackDeck.drawCard(),
+          this.blackDeck.drawCard(),
+        ],
+      },
+    });
+  }
+
   addPlayer(player: Player) {
     this.playerList.push(player);
     this.playerList[0].isLeader = true;
@@ -71,6 +103,7 @@ export class SuperfightGame {
       this.playerList[0].isLeader = true;
     }
     this.updateGameState();
+    //TODO handle player leaving
   }
 
   parseCommand(playerId: string, command: CommandToServer) {
@@ -92,11 +125,36 @@ export class SuperfightGame {
         break;
       case PlayerAction.START_VOTING:
         if (this.playerList[0].id === playerId) {
-          this.startVoting();
+          this.advanceToVotingStage();
         } else {
           this.gameLog('ERROR', 'Only The leader can start the voting phase');
         }
     }
+  }
+
+  advanceToSelectingPhase(champion?: Player) {
+    this.phaseName = PhaseName.SELECTING;
+    if (!champion) {
+      this.playerA = this.playerList[0];
+      this.playerB = this.playerList[1];
+    } else {
+      const previousLoser =
+        champion.id === this.playerA.id ? this.playerB : this.playerA;
+      let challengerIndex = this.playerList
+        .map((player) => player.id)
+        .indexOf(previousLoser.id);
+      while (this.playerList[challengerIndex].id !== champion.id) {
+        if (challengerIndex + 1 < this.playerList.length) {
+          challengerIndex++;
+        } else {
+          challengerIndex = 0;
+        }
+      }
+      this.playerA = champion;
+      this.playerB = this.playerList[challengerIndex];
+    }
+    this.updateGameState();
+    this.updatePrivateState();
   }
 
   selectFighter(playerId: string, command: CommandToServer) {
@@ -154,7 +212,7 @@ export class SuperfightGame {
     return isPlayersTurn && hasProperPayload;
   }
 
-  startVoting() {
+  advanceToVotingStage() {
     if (this.phaseName === PhaseName.DEBATING) {
       this.phaseName = PhaseName.VOTING;
       this.updateGameState();

@@ -11,6 +11,7 @@ import {
   PhaseName,
   Player,
   GamePhase,
+  PrivateState,
 } from '../../../shared-models';
 import { UiState, BLANK_UI_STATE } from './models/game.models';
 import { CommandJoinRoom } from '../../../shared-models';
@@ -51,7 +52,7 @@ export class GameManagerService {
         isPlaying: this.checkIfPlaying(gameState.phase),
       });
     });
-    this.socket.on('updatePrivateState', (privateState) => {
+    this.socket.on('updatePrivateState', (privateState: PrivateState) => {
       console.log('private state: ', privateState);
       this.uiState$.next({
         ...this.uiState$.value,
