@@ -2,17 +2,18 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Socket } from 'ngx-socket-io';
 import {
-  packageStartVoting,
-  packageFighterSelection,
+  CommandStartVoting,
+  CommandFighterSelection,
+  CommandNewGame,
   Card,
-  packageVote,
+  CommandVote,
   GameState,
   PhaseName,
   Player,
   GamePhase,
 } from '../../../shared-models';
 import { UiState, BLANK_UI_STATE } from './models/game.models';
-import { PackageJoinRoom } from '../../../shared-models';
+import { CommandJoinRoom } from '../../../shared-models';
 import { Observable, BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -35,7 +36,7 @@ export class GameManagerService {
     this.socket.connect();
     this.socket.emit(
       'joinRoom',
-      new PackageJoinRoom({
+      new CommandJoinRoom({
         player: { id: this.socket.ioSocket.id, name: this.uiState$.value.name },
         roomName: roomName,
       })
@@ -64,7 +65,7 @@ export class GameManagerService {
   }
 
   startVoting() {
-    this.socket.emit('clientPackage', new packageStartVoting());
+    this.socket.emit('clientPackage', new CommandStartVoting());
   }
 
   leaveGame() {
@@ -73,7 +74,7 @@ export class GameManagerService {
   }
 
   newGame() {
-    this.socket.emit('newGame');
+    this.socket.emit('clientPackage', new CommandNewGame());
   }
 
   selectWhiteCard(card: Card) {
@@ -101,7 +102,7 @@ export class GameManagerService {
       });
       this.socket.emit(
         'clientPackage',
-        new packageFighterSelection({
+        new CommandFighterSelection({
           white: this.uiState$.value.whiteSelection,
           black: this.uiState$.value.blackSelection,
         })
@@ -110,7 +111,7 @@ export class GameManagerService {
   }
 
   sendVote(vote: string) {
-    this.socket.emit('clientPackage', new packageVote(vote));
+    this.socket.emit('clientPackage', new CommandVote(vote));
   }
 
   canActivate(): boolean {

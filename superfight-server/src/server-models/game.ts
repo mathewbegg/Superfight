@@ -1,4 +1,10 @@
-import { Player, Card, GameState, PhaseName } from '../../../shared-models';
+import {
+  Player,
+  Card,
+  GameState,
+  PhaseName,
+  CommandToServer,
+} from '../../../shared-models';
 import { Deck } from './deck';
 import { BehaviorSubject } from 'rxjs';
 
@@ -64,6 +70,10 @@ export class SuperfightGame {
       this.playerList[0].isLeader = true;
     }
     this.updateGameState();
+  }
+
+  parseCommand(command: CommandToServer) {
+    console.log(this.roomName, ' recieved command: ', command);
   }
 
   getPlayerList(): Player[] {
