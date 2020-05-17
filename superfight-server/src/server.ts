@@ -61,7 +61,7 @@ function userConnect(socket: Socket) {
       });
     }
     socket.on('clientPackage', (command: CommandToServer) => {
-      rooms[roomName].parseCommand(command);
+      rooms[roomName].parseCommand(player.id, command);
     });
     socket.on('leaveRoom', () => {
       rooms[roomName].removePlayer(player);

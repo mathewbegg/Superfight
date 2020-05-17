@@ -4,6 +4,7 @@ import {
   GameState,
   PhaseName,
   CommandToServer,
+  PlayerAction,
 } from '../../../shared-models';
 import { Deck } from './deck';
 import { BehaviorSubject } from 'rxjs';
@@ -72,8 +73,17 @@ export class SuperfightGame {
     this.updateGameState();
   }
 
-  parseCommand(command: CommandToServer) {
-    console.log(this.roomName, ' recieved command: ', command);
+  parseCommand(playerId: string, command: CommandToServer) {
+    console.info(this.roomName, ' recieved command: ', command);
+    switch (command.action) {
+      case PlayerAction.NEW_GAME:
+        if (this.playerList.find((player) => playerId === player.id).isLeader) {
+          this.newGame();
+        } else {
+          console.error('Only the leader can start a new game');
+        }
+        break;
+    }
   }
 
   getPlayerList(): Player[] {
