@@ -2,13 +2,19 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Socket } from 'ngx-socket-io';
 import {
-  packageStartVoting,
-  packageFighterSelection,
-  UiState,
-  BLANK_UI_STATE,
+  CommandStartVoting,
+  CommandFighterSelection,
+  CommandNewGame,
   Card,
-  packageVote,
-} from './models/game.models';
+  CommandVote,
+  GameState,
+  PhaseName,
+  Player,
+  GamePhase,
+  PrivateState,
+} from '../../../shared-models';
+import { UiState, BLANK_UI_STATE } from './models/game.models';
+import { CommandJoinRoom } from '../../../shared-models';
 import { Observable, BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -21,36 +27,36 @@ export class GameManagerService {
 
   constructor(private socket: Socket, private router: Router) {}
 
-  connectToGame(name: string) {
+  connectToGame(name: string, roomName: string) {
     this.uiState$.next({
       ...this.uiState$.value,
       name: name,
+      id: this.socket.ioSocket.id,
     });
     this.router.navigateByUrl('/game');
     this.socket.connect();
-    this.socket.emit('setName', this.uiState$.value.name);
-    this.socket.on('listPlayers', (playerList) => {
-      this.uiState$.next({
-        ...this.uiState$.value,
-        playerList: playerList,
-        id: this.socket.ioSocket.id,
-        isLeader: this.checkIfLeader(),
-      });
-    });
-    this.socket.on('updatePublicState', (gameState) => {
+    this.socket.emit(
+      'joinRoom',
+      new CommandJoinRoom({
+        player: { id: this.socket.ioSocket.id, name: this.uiState$.value.name },
+        roomName: roomName,
+      })
+    );
+    this.socket.on('updatePublicState', (gameState: GameState) => {
       console.log('public state: ', gameState);
       this.uiState$.next({
         ...this.uiState$.value,
         gameState: gameState,
-        isPlaying: this.checkIfPlaying(),
+        playerList: gameState.playerList, //TODO move ui playerList into gameState?
+        isLeader: this.checkIfLeader(gameState.playerList),
+        isPlaying: this.checkIfPlaying(gameState.phase),
       });
     });
-    this.socket.on('updatePrivateState', (privateState) => {
+    this.socket.on('updatePrivateState', (privateState: PrivateState) => {
       console.log('private state: ', privateState);
       this.uiState$.next({
         ...this.uiState$.value,
         privateState: privateState,
-        isPlaying: this.checkIfPlaying(),
       });
     });
   }
@@ -60,16 +66,16 @@ export class GameManagerService {
   }
 
   startVoting() {
-    this.socket.emit('clientPackage', new packageStartVoting());
+    this.socket.emit('commandToServer', new CommandStartVoting());
   }
 
   leaveGame() {
     this.router.navigateByUrl('');
-    this.socket.disconnect();
+    this.socket.emit('leaveRoom');
   }
 
   newGame() {
-    this.socket.emit('newGame');
+    this.socket.emit('commandToServer', new CommandNewGame());
   }
 
   selectWhiteCard(card: Card) {
@@ -96,8 +102,8 @@ export class GameManagerService {
         lockedIn: true,
       });
       this.socket.emit(
-        'clientPackage',
-        new packageFighterSelection({
+        'commandToServer',
+        new CommandFighterSelection({
           white: this.uiState$.value.whiteSelection,
           black: this.uiState$.value.blackSelection,
         })
@@ -106,7 +112,7 @@ export class GameManagerService {
   }
 
   sendVote(vote: string) {
-    this.socket.emit('clientPackage', new packageVote(vote));
+    this.socket.emit('commandToServer', new CommandVote(vote));
   }
 
   canActivate(): boolean {
@@ -117,20 +123,19 @@ export class GameManagerService {
     return true;
   }
 
-  checkIfLeader() {
-    return this.uiState$.value?.playerList?.filter(
-      (player) => player.id === this.uiState$.value.id
-    )[0]?.isLeader;
+  checkIfLeader(playerList: Player[]) {
+    return (
+      playerList.filter((player) => player.id === this.uiState$.value.id)[0]
+        ?.isLeader || false
+    );
   }
 
-  checkIfPlaying() {
-    let phase;
-    if ((phase = this.uiState$.value?.gameState?.phase)) {
-      return (
-        phase.playerA.id === this.uiState$.value.id ||
-        phase.playerB.id === this.uiState$.value.id
-      );
-    }
+  checkIfPlaying(phase: GamePhase) {
+    return (
+      phase?.phaseName !== PhaseName.WAITING &&
+      (phase?.playerA?.id === this.uiState$.value.id ||
+        phase?.playerB?.id === this.uiState$.value.id)
+    );
   }
 }
 

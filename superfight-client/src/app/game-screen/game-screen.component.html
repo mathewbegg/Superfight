@@ -12,7 +12,7 @@
         </button>
         <div class="player-list-title">Players</div>
         <mat-list>
-          <mat-list-item *ngFor="let player of uiState.playerList">
+          <mat-list-item *ngFor="let player of uiState?.gameState?.playerList">
             <span
               class="player-list-name"
               [class.highlighted]="player.id === uiState.id"
