@@ -18,6 +18,7 @@ export class SuperfightGame {
   private phaseName: PhaseName;
   private playerA: Player;
   private playerB: Player;
+  private playersWhoVoted: { [id: string]: boolean } = {};
   gameState = new BehaviorSubject<GameState>(null);
   privateState = new BehaviorSubject<PrivateState>(null);
 
@@ -125,19 +126,29 @@ export class SuperfightGame {
         break;
       case PlayerAction.START_VOTING:
         if (this.playerList[0].id === playerId) {
-          this.advanceToVotingStage();
+          this.advanceToVotingPhase();
         } else {
           this.gameLog('ERROR', 'Only The leader can start the voting phase');
+        }
+        break;
+      case PlayerAction.PLAYER_VOTE:
+        if (
+          playerId !== this.playerA.id &&
+          playerId !== this.playerB.id &&
+          !this.playersWhoVoted[playerId]
+        ) {
+          this.voteFor(command.payload);
+          this.playersWhoVoted[playerId] = true;
         }
     }
   }
 
-  advanceToSelectingPhase(champion?: Player) {
+  advanceToSelectingPhase(champion?: Player, rematch = false) {
     this.phaseName = PhaseName.SELECTING;
-    if (!champion) {
+    if (!rematch && !champion) {
       this.playerA = this.playerList[0];
       this.playerB = this.playerList[1];
-    } else {
+    } else if (!rematch) {
       const previousLoser =
         champion.id === this.playerA.id ? this.playerB : this.playerA;
       let challengerIndex = this.playerList
@@ -187,19 +198,29 @@ export class SuperfightGame {
       this.phaseName = PhaseName.DEBATING;
       this.gameLog(
         'INFO',
-        `${this.roomName}: ${this.playerA.name} selects ${fighterA[0].text} ${fighterA[1].text} ${fighterA[2].text}`
+        `${this.playerA.name} selects ${fighterA[0].text} ${fighterA[1].text} ${fighterA[2].text}`
       );
       this.gameLog(
         'INFO',
-        `${this.roomName}: ${this.playerB.name} selects ${fighterB[0].text} ${fighterB[1].text} ${fighterB[2].text}`
+        `${this.playerB.name} selects ${fighterB[0].text} ${fighterB[1].text} ${fighterB[2].text}`
       );
-      this.updateGameState();
+    } else if (this.phaseName === PhaseName.TIEBREAKER) {
+      this.gameLog(
+        'INFO',
+        `${this.playerA} assigned ${this.playerA.selectedFighter[0]} for tie breaker`
+      );
+      this.gameLog(
+        'INFO',
+        `${this.playerB} assigned ${this.playerB.selectedFighter[0]} for tie breaker`
+      );
+      this.phaseName = PhaseName.DEBATING;
     } else {
       this.gameLog(
         'INFO',
         'Tried to advance to debate phase at an improper time'
       );
     }
+    this.updateGameState();
   }
 
   validateFighterSelection(
@@ -212,9 +233,12 @@ export class SuperfightGame {
     return isPlayersTurn && hasProperPayload;
   }
 
-  advanceToVotingStage() {
+  advanceToVotingPhase() {
     if (this.phaseName === PhaseName.DEBATING) {
       this.phaseName = PhaseName.VOTING;
+      this.playersWhoVoted = {};
+      this.playerA.votes = 0;
+      this.playerB.votes = 0;
       this.updateGameState();
     } else {
       this.gameLog(
@@ -222,6 +246,58 @@ export class SuperfightGame {
         'Tried to advance to voting phase at improper time'
       );
     }
+  }
+
+  voteFor(letter: string) {
+    if (letter.toUpperCase() === 'A') {
+      this.playerA.votes++;
+    } else {
+      this.playerB.votes++;
+    }
+    if (
+      this.playerA.votes + this.playerB.votes ===
+      this.playerList.length - 2
+    ) {
+      if (this.playerA.votes > this.playerB.votes) {
+        this.advanceToWinnerPhase('A');
+      } else if (this.playerB.votes > this.playerA.votes) {
+        this.advanceToWinnerPhase('B');
+      } else {
+        this.advanceToTieBreakerPhase();
+      }
+    }
+  }
+
+  advanceToWinnerPhase(letter: string) {
+    this.phaseName = PhaseName.WINNER;
+    if (letter === 'A') {
+      this.playerA.score++;
+      this.gameLog(
+        'INFO',
+        `${this.playerA.name} won the round, scored increased to ${this.playerA.score}`
+      );
+      this.updateGameState();
+      this.advanceToSelectingPhase(this.playerA);
+    } else {
+      this.playerB.score++;
+      this.gameLog(
+        'INFO',
+        `${this.playerB.name} won the round, scored increased to ${this.playerB.score}`
+      );
+      this.updateGameState();
+      this.advanceToSelectingPhase(this.playerB);
+    }
+  }
+
+  advanceToTieBreakerPhase() {
+    this.phaseName = PhaseName.TIEBREAKER;
+    this.gameLog('INFO', 'Vote is a tie, commencing tie breaker');
+    this.playerA.votes = 0;
+    this.playerB.votes = 0;
+    this.playerA.selectedFighter = [this.whiteDeck.drawCard()];
+    this.playerB.selectedFighter = [this.whiteDeck.drawCard()];
+    this.updateGameState();
+    this.advanceToDebatePhase();
   }
 
   getPlayerList(): Player[] {

@@ -3,6 +3,8 @@ export enum PhaseName {
   SELECTING = 'SELECTING',
   DEBATING = 'DEBATING',
   VOTING = 'VOTING',
+  TIEBREAKER = 'TIEBREAKER',
+  WINNER = 'WINNER',
 }
 
 export enum CardColor {
