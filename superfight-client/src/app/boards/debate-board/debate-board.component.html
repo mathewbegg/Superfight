@@ -2,6 +2,12 @@
   {{ bannerMessage }}
 </div>
 <div class="fighter-area">
+  <div
+    class="you-tag"
+    [class.hidden]="uiState.gameState.phase.playerA.id !== uiState.id"
+  >
+    You
+  </div>
   <spf-card-group
     [cards]="uiState.gameState.phase.playerA.selectedFighter"
     [locked]="true"
@@ -11,6 +17,12 @@
 </div>
 <div class="vs-line">VS</div>
 <div class="fighter-area">
+  <div
+    class="you-tag"
+    [class.hidden]="uiState.gameState.phase.playerB.id !== uiState.id"
+  >
+    You
+  </div>
   <spf-card-group
     [cards]="uiState.gameState.phase.playerB.selectedFighter"
     [locked]="true"

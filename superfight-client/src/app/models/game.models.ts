@@ -21,8 +21,6 @@ export interface UiState {
   isPlaying: boolean;
   gameState: GameState;
   privateState: any;
-  playerA?: Player;
-  playerB?: Player;
   whiteSelection?: Card;
   blackSelection?: Card;
   lockedIn?: boolean;
