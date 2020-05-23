@@ -18,7 +18,9 @@ export class Deck {
       this.shuffle();
       console.log('Deck depleted. Shuffling discard pile.');
     }
-    return this.cards.pop();
+    const card = this.cards.pop();
+    this.discardPile.push(card);
+    return card;
   }
 
   shuffle() {

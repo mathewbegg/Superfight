@@ -60,21 +60,23 @@ export class SuperfightGame {
   }
 
   updatePrivateState() {
-    this.privateState.next({
-      playerId: this.playerA.id,
-      payload: {
-        whiteOptions: [
-          this.whiteDeck.drawCard(),
-          this.whiteDeck.drawCard(),
-          this.whiteDeck.drawCard(),
-        ],
-        blackOptions: [
-          this.blackDeck.drawCard(),
-          this.blackDeck.drawCard(),
-          this.blackDeck.drawCard(),
-        ],
-      },
-    });
+    if (!this.playerA.champion) {
+      this.privateState.next({
+        playerId: this.playerA.id,
+        payload: {
+          whiteOptions: [
+            this.whiteDeck.drawCard(),
+            this.whiteDeck.drawCard(),
+            this.whiteDeck.drawCard(),
+          ],
+          blackOptions: [
+            this.blackDeck.drawCard(),
+            this.blackDeck.drawCard(),
+            this.blackDeck.drawCard(),
+          ],
+        },
+      });
+    }
     this.privateState.next({
       playerId: this.playerB.id,
       payload: {
@@ -154,12 +156,11 @@ export class SuperfightGame {
       let challengerIndex = this.playerList
         .map((player) => player.id)
         .indexOf(previousLoser.id);
-      while (this.playerList[challengerIndex].id !== champion.id) {
-        if (challengerIndex + 1 < this.playerList.length) {
-          challengerIndex++;
-        } else {
-          challengerIndex = 0;
-        }
+      while (
+        this.playerList[challengerIndex].id === champion.id ||
+        this.playerList[challengerIndex].id === previousLoser.id
+      ) {
+        challengerIndex = (challengerIndex + 1) % this.playerList.length;
       }
       this.playerA = champion;
       this.playerB = this.playerList[challengerIndex];
@@ -271,6 +272,8 @@ export class SuperfightGame {
   advanceToWinnerPhase(letter: string) {
     this.phaseName = PhaseName.WINNER;
     if (letter === 'A') {
+      this.playerA.champion = true;
+      this.playerB.champion = false;
       this.playerA.score++;
       this.gameLog(
         'INFO',
@@ -279,6 +282,8 @@ export class SuperfightGame {
       this.updateGameState();
       this.advanceToSelectingPhase(this.playerA);
     } else {
+      this.playerB.champion = true;
+      this.playerA.champion = false;
       this.playerB.score++;
       this.gameLog(
         'INFO',
@@ -289,6 +294,7 @@ export class SuperfightGame {
     }
   }
 
+  //TODO stop at winner and tiebreaker phases before continuing
   advanceToTieBreakerPhase() {
     this.phaseName = PhaseName.TIEBREAKER;
     this.gameLog('INFO', 'Vote is a tie, commencing tie breaker');
@@ -304,9 +310,10 @@ export class SuperfightGame {
     return this.playerList;
   }
 
+  /**Sets all players scores to 0, and all champions to false */
   clearScores() {
     this.playerList = this.playerList.map((player) => {
-      return { ...player, score: 0 };
+      return { ...player, score: 0, champion: false };
     });
     this.updateGameState();
   }

@@ -25,6 +25,7 @@ export interface Player {
   isLeader?: boolean;
   votes?: number;
   score?: number;
+  champion?: boolean;
   selectedFighter?: Card[];
 }
 

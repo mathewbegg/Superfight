@@ -78,7 +78,11 @@ function userConnect(socket: Socket) {
       rooms[roomName].parseCommand(player.id, command);
     });
     socket.on('leaveRoom', () => {
+      //FIXME player joins room 'a', leaves, joins room 'b', leaves, error because server is trying to remove him from room 'a' still
       rooms[roomName].removePlayer(player);
+      if (!rooms[roomName].getPlayerList().length) {
+        delete rooms[roomName];
+      }
       socket.leave(roomName);
     });
   });
