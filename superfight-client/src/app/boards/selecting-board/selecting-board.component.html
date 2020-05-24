@@ -9,7 +9,13 @@
         : uiState.gameState.phase.playerA.name
     }}
   </div>
-  <div class="banner-message">SELECT YOUR FIGHTER</div>
+  <div class="banner-message">
+    {{
+      uiState.lockedIn || uiState.isChampion
+        ? 'WAITING FOR OPPONENT'
+        : 'SELECT YOUR FIGHTER'
+    }}
+  </div>
   <div class="cards-area">
     <spf-card
       [blankSlot]="true"
@@ -22,7 +28,9 @@
       [selectable]="false"
     ></spf-card>
     <button
-      *ngIf="uiState.whiteSelection && uiState.blackSelection"
+      *ngIf="
+        !uiState.isChampion && uiState.whiteSelection && uiState.blackSelection
+      "
       mat-raised-button
       color="primary"
       (click)="lockIn()"
@@ -38,7 +46,7 @@
       </ng-container>
     </button>
   </div>
-  <div class="cards-area">
+  <div class="cards-area" *ngIf="!uiState.isChampion">
     <spf-card-group
       [cards]="uiState.privateState.whiteOptions"
       [locked]="uiState.lockedIn"

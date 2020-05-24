@@ -50,6 +50,7 @@ export class GameManagerService {
         playerList: gameState.playerList, //TODO move ui playerList into gameState?
         isLeader: this.checkIfLeader(gameState.playerList),
         isPlaying: this.checkIfPlaying(gameState.phase),
+        isChampion: this.checkIfChampion(gameState.phase),
       });
     });
     this.socket.on('updatePrivateState', (privateState: PrivateState) => {
@@ -123,14 +124,20 @@ export class GameManagerService {
     return true;
   }
 
-  checkIfLeader(playerList: Player[]) {
+  checkIfChampion(phase: GamePhase): boolean {
+    return (
+      this.uiState$.value?.id === phase?.playerA?.id && phase?.playerA?.champion
+    );
+  }
+
+  checkIfLeader(playerList: Player[]): boolean {
     return (
       playerList.filter((player) => player.id === this.uiState$.value.id)[0]
         ?.isLeader || false
     );
   }
 
-  checkIfPlaying(phase: GamePhase) {
+  checkIfPlaying(phase: GamePhase): boolean {
     return (
       phase?.phaseName !== PhaseName.WAITING &&
       (phase?.playerA?.id === this.uiState$.value.id ||

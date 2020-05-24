@@ -8,6 +8,7 @@ export const BLANK_UI_STATE: UiState = {
   cards: null,
   isLeader: null,
   isPlaying: null,
+  isChampion: null,
   gameState: null,
   privateState: null,
 };
@@ -19,6 +20,7 @@ export interface UiState {
   cards: Card[];
   isLeader: boolean;
   isPlaying: boolean;
+  isChampion: boolean;
   gameState: GameState;
   privateState: any;
   whiteSelection?: Card;
