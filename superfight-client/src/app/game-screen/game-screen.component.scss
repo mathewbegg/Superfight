@@ -32,6 +32,14 @@ mat-sidenav {
       border-top: 1px solid mat-color($primary);
       font-weight: bold;
     }
+    .list-item-wrapper {
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+    }
+    .player-score-indicator {
+      margin-left: 10px;
+    }
   }
 }
 

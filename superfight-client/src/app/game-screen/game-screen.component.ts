@@ -14,6 +14,8 @@ export class GameScreenComponent extends BaseUiStateComponent {
   SELECTING = PhaseName.SELECTING;
   DEBATING = PhaseName.DEBATING;
   VOTING = PhaseName.VOTING;
+  WINNER = PhaseName.WINNER;
+  TIEBREAKER = PhaseName.TIEBREAKER;
 
   constructor(protected gameManager: GameManagerService) {
     super(gameManager);

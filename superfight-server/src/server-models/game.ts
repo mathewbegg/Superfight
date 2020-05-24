@@ -280,7 +280,10 @@ export class SuperfightGame {
         `${this.playerA.name} won the round, scored increased to ${this.playerA.score}`
       );
       this.updateGameState();
-      this.advanceToSelectingPhase(this.playerA);
+      setTimeout(() => {
+        //continue after 5 seconds
+        this.advanceToSelectingPhase(this.playerA);
+      }, 5000);
     } else {
       this.playerB.champion = true;
       this.playerA.champion = false;
@@ -290,11 +293,13 @@ export class SuperfightGame {
         `${this.playerB.name} won the round, scored increased to ${this.playerB.score}`
       );
       this.updateGameState();
-      this.advanceToSelectingPhase(this.playerB);
+      setTimeout(() => {
+        //continue after 5 seconds
+        this.advanceToSelectingPhase(this.playerB);
+      }, 5000);
     }
   }
 
-  //TODO stop at winner and tiebreaker phases before continuing
   advanceToTieBreakerPhase() {
     this.phaseName = PhaseName.TIEBREAKER;
     this.gameLog('INFO', 'Vote is a tie, commencing tie breaker');
@@ -303,7 +308,10 @@ export class SuperfightGame {
     this.playerA.selectedFighter = [this.whiteDeck.drawCard()];
     this.playerB.selectedFighter = [this.whiteDeck.drawCard()];
     this.updateGameState();
-    this.advanceToDebatePhase();
+    setTimeout(() => {
+      //continue after 5 seconds
+      this.advanceToDebatePhase();
+    }, 5000);
   }
 
   getPlayerList(): Player[] {

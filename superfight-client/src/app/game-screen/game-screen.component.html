@@ -13,11 +13,16 @@
         <div class="player-list-title">Players</div>
         <mat-list>
           <mat-list-item *ngFor="let player of uiState?.gameState?.playerList">
-            <span
-              class="player-list-name"
+            <div
+              class="list-item-wrapper"
               [class.highlighted]="player.id === uiState.id"
-              >{{ player.name }}</span
-            ><span *ngIf="player.isLeader">&nbsp;(Leader)</span>
+            >
+              <span class="player-list-name"
+                >{{ player.name }}
+                <span *ngIf="player.isLeader">&nbsp;(Leader)</span>
+              </span>
+              <span class="player-score-indicator">{{ player.score }}</span>
+            </div>
           </mat-list-item>
         </mat-list>
       </div>
@@ -47,6 +52,14 @@
 
         <ng-container *ngSwitchCase="VOTING">
           <spf-debate-board class="board"></spf-debate-board>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="WINNER">
+          <spf-winner-board class="board"></spf-winner-board>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="TIEBREAKER">
+          <spf-winner-board class="board"></spf-winner-board>
         </ng-container>
       </ng-container>
     </div>

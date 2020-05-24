@@ -1,6 +1,6 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { Card, SelectionPair, UiState } from '../../models/game.models';
-import { GameManagerService } from 'src/app/game-manager.service';
+import { Component } from '@angular/core';
+import { Card } from '../../models/game.models';
+import { GameManagerService } from '../../game-manager.service';
 import { BaseUiStateComponent } from 'src/app/models/base-ui-state.component';
 
 @Component({
@@ -15,6 +15,7 @@ export class SelectingBoardComponent extends BaseUiStateComponent {
 
   lockIn() {
     this.gameManager.lockInFighterSelection();
+    //FIXME stays locked through rounds
   }
 
   selectWhite(card: Card) {

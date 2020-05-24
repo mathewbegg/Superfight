@@ -16,9 +16,15 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { CardsModule } from './cards/cards.module';
 import { BoardsModule } from './boards/boards.module';
+import { WinnerBoardComponent } from './boards/winner-board/winner-board.component';
 
 @NgModule({
-  declarations: [AppComponent, HomeScreenComponent, GameScreenComponent],
+  declarations: [
+    AppComponent,
+    HomeScreenComponent,
+    GameScreenComponent,
+    WinnerBoardComponent,
+  ],
   imports: [
     CardsModule,
     BoardsModule,

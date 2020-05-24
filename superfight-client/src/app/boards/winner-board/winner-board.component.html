@@ -1,0 +1,12 @@
+<p>winner board</p>
+<div *ngIf="uiState.gameState.phase.phaseName === WINNER">
+  {{
+    uiState.gameState.phase.playerA.champion
+      ? uiState.gameState.phase.playerA.name
+      : uiState.gameState.phase.playerB.name
+  }}
+  Wins!
+</div>
+<div *ngIf="uiState.gameState.phase.phaseName === TIEBREAKER">
+  The Vote was a tie. Commencing tiebreaker!
+</div>
