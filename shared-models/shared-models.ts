@@ -36,7 +36,10 @@ export interface GameState {
 
 export interface PrivateState {
   playerId: string;
-  payload: any;
+  payload: {
+    whiteOptions: Card[];
+    blackOptions: Card[];
+  };
 }
 
 export interface privatePackage {

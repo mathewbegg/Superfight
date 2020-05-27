@@ -15,7 +15,7 @@ export class SelectingBoardComponent extends BaseUiStateComponent {
 
   lockIn() {
     this.gameManager.lockInFighterSelection();
-    //FIXME stays locked through rounds
+    //FIXME champions fighter gets messed up if there was a tiebreaker
   }
 
   selectWhite(card: Card) {
@@ -24,5 +24,11 @@ export class SelectingBoardComponent extends BaseUiStateComponent {
 
   selectBlack(card: Card) {
     this.gameManager.selectBlackCard(card);
+  }
+
+  get championFighter() {
+    return this.uiState.gameState.playerList.find(
+      (player) => player.id === this.uiState.id
+    ).selectedFighter;
   }
 }

@@ -112,6 +112,17 @@ export class GameManagerService {
     }
   }
 
+  resetFighterIfNotChampion() {
+    if (!this.uiState$.value.isChampion) {
+      this.uiState$.next({
+        ...this.uiState$.value,
+        whiteSelection: null,
+        blackSelection: null,
+        lockedIn: false,
+      });
+    }
+  }
+
   sendVote(vote: string) {
     this.socket.emit('commandToServer', new CommandVote(vote));
   }

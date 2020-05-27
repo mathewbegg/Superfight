@@ -15,4 +15,9 @@ export class WinnerBoardComponent extends BaseUiStateComponent {
   constructor(protected gameManager: GameManagerService) {
     super(gameManager);
   }
+
+  ngOnInit() {
+    super.ngOnInit();
+    this.gameManager.resetFighterIfNotChampion();
+  }
 }

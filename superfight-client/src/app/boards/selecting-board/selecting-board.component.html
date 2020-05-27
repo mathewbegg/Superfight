@@ -17,16 +17,24 @@
     }}
   </div>
   <div class="cards-area">
-    <spf-card
-      [blankSlot]="true"
-      [card]="uiState.whiteSelection"
-      [selectable]="false"
-    ></spf-card>
-    <spf-card
-      [blankSlot]="true"
-      [card]="uiState.blackSelection"
-      [selectable]="false"
-    ></spf-card>
+    <ng-container *ngIf="!uiState.isChampion; else championCards">
+      <spf-card
+        [blankSlot]="true"
+        [card]="uiState.whiteSelection"
+        [selectable]="false"
+      ></spf-card>
+      <spf-card
+        [blankSlot]="true"
+        [card]="uiState.blackSelection"
+        [selectable]="false"
+      ></spf-card>
+    </ng-container>
+    <ng-template #championCards>
+      <spf-card-group
+        [cards]="championFighter"
+        [locked]="true"
+      ></spf-card-group>
+    </ng-template>
     <button
       *ngIf="
         !uiState.isChampion && uiState.whiteSelection && uiState.blackSelection
