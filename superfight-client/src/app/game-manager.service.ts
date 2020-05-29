@@ -47,7 +47,7 @@ export class GameManagerService {
       this.uiState$.next({
         ...this.uiState$.value,
         gameState: gameState,
-        playerList: gameState.playerList, //TODO move ui playerList into gameState?
+        playerList: gameState.playerList,
         isLeader: this.checkIfLeader(gameState.playerList),
         isPlaying: this.checkIfPlaying(gameState.phase),
         isChampion: this.checkIfChampion(gameState.phase),
@@ -162,3 +162,6 @@ export class GameManagerService {
 //TODO Activity Feed
 //TODO pick card from your hand cards.
 //TODO errors if not connected to server
+//TODO save game
+//TODO routing to game
+//TODO cookies to remember players
