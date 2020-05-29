@@ -15,7 +15,6 @@ export class SelectingBoardComponent extends BaseUiStateComponent {
 
   lockIn() {
     this.gameManager.lockInFighterSelection();
-    //FIXME champions fighter gets messed up if there was a tiebreaker
   }
 
   selectWhite(card: Card) {

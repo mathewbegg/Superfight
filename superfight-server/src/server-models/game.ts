@@ -18,6 +18,9 @@ export class SuperfightGame {
   private phaseName: PhaseName;
   private playerA: Player;
   private playerB: Player;
+  private originalFighterA: Card[];
+  private originalFighterB: Card[];
+  private tieBreaking = false;
   private playersWhoVoted: { [id: string]: boolean } = {};
   gameState = new BehaviorSubject<GameState>(null);
   privateState = new BehaviorSubject<PrivateState>(null);
@@ -95,6 +98,7 @@ export class SuperfightGame {
   }
 
   addPlayer(player: Player) {
+    player.score = 0;
     this.playerList.push(player);
     this.playerList[0].isLeader = true;
     this.updateGameState();
@@ -147,6 +151,7 @@ export class SuperfightGame {
 
   advanceToSelectingPhase(champion?: Player, rematch = false) {
     this.phaseName = PhaseName.SELECTING;
+    this.tieBreaking = false;
     if (!rematch && !champion) {
       this.playerA = this.playerList[0];
       this.playerB = this.playerList[1];
@@ -282,6 +287,9 @@ export class SuperfightGame {
       this.updateGameState();
       setTimeout(() => {
         //continue after 5 seconds
+        if (this.tieBreaking && this.originalFighterA) {
+          this.playerA.selectedFighter = this.originalFighterA;
+        }
         this.advanceToSelectingPhase(this.playerA);
       }, 5000);
     } else {
@@ -295,6 +303,9 @@ export class SuperfightGame {
       this.updateGameState();
       setTimeout(() => {
         //continue after 5 seconds
+        if (this.tieBreaking && this.originalFighterB) {
+          this.playerB.selectedFighter = this.originalFighterB;
+        }
         this.advanceToSelectingPhase(this.playerB);
       }, 5000);
     }
@@ -305,6 +316,11 @@ export class SuperfightGame {
     this.gameLog('INFO', 'Vote is a tie, commencing tie breaker');
     this.playerA.votes = 0;
     this.playerB.votes = 0;
+    if (!this.tieBreaking) {
+      this.originalFighterA = this.playerA.selectedFighter;
+      this.originalFighterB = this.playerB.selectedFighter;
+    }
+    this.tieBreaking = true;
     this.playerA.selectedFighter = [this.whiteDeck.drawCard()];
     this.playerB.selectedFighter = [this.whiteDeck.drawCard()];
     this.updateGameState();
