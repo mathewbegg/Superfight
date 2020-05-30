@@ -78,3 +78,20 @@ export interface VotingPhase extends GamePhase {
     votes: number;
   };
 }
+
+//TODO Special Cards
+/*WHITE
+------
+pick a _____
+player to your left
+
+BLACK
+------
+pick a character card from your hand
+draw another character card from the deck
+draw and play 2 random attributes from the deck (discard this card after use)
+steal 1 attribute from opponent
+draw a character card with one new attribute as your sidekick
+draw and play 2 random attributes from the deck
+
+MEGAFIGHTER, left leg, right leg, left arm, right arm, (draw 4 character cards)*/
