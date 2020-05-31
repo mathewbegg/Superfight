@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
-import { SelectionPair, PhaseName } from '../models/game.models';
+import { PhaseName } from '../models/game.models';
 import { GameManagerService } from '../game-manager.service';
-import { Subject, pipe } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { BaseUiStateComponent } from '../models/base-ui-state.component';
+import { DialogService } from '../dialogs/dialog.service';
 
 @Component({
   selector: 'spf-game-screen',
@@ -17,12 +16,19 @@ export class GameScreenComponent extends BaseUiStateComponent {
   WINNER = PhaseName.WINNER;
   TIEBREAKER = PhaseName.TIEBREAKER;
 
-  constructor(protected gameManager: GameManagerService) {
+  constructor(
+    protected gameManager: GameManagerService,
+    private dialogService: DialogService
+  ) {
     super(gameManager);
   }
 
   leaveGame() {
-    this.gameManager.leaveGame();
+    this.dialogService.areYouSure().subscribe((confirmLeave) => {
+      if (confirmLeave) {
+        this.gameManager.leaveGame();
+      }
+    });
   }
 
   newGame() {

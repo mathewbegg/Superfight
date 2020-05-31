@@ -1,0 +1,12 @@
+@import '~@angular/material/theming';
+@import '../../../assets/theme.scss';
+
+h2 {
+  display: flex;
+  justify-content: center;
+  color: mat-color($primary);
+}
+
+mat-dialog-actions {
+  justify-content: space-between;
+}

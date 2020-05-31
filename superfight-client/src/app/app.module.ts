@@ -17,6 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { CardsModule } from './cards/cards.module';
 import { BoardsModule } from './boards/boards.module';
 import { WinnerBoardComponent } from './boards/winner-board/winner-board.component';
+import { DialogModule } from './dialogs/dialog.module';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { WinnerBoardComponent } from './boards/winner-board/winner-board.compone
   imports: [
     CardsModule,
     BoardsModule,
+    DialogModule,
     BrowserModule,
     AppRoutingModule,
     SocketIoModule.forRoot(appSocketConfig),
@@ -39,7 +41,6 @@ import { WinnerBoardComponent } from './boards/winner-board/winner-board.compone
     MatSidenavModule,
     MatIconModule,
   ],
-  providers: [],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
