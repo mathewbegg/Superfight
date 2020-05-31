@@ -158,7 +158,6 @@ export class GameManagerService {
 }
 
 //TODO only go to game-screen upon connection
-//TODO 'are you sure?' and info dialogs
 //TODO Activity Feed
 //TODO pick card from your hand cards.
 //TODO errors if not connected to server
