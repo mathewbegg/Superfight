@@ -8,9 +8,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AreYouSureDialogComponent } from './are-you-sure-dialog/are-you-sure-dialog.component';
 import { MatButtonModule } from '@angular/material/button';
 import { DialogService } from './dialog.service';
+import { InstructionDialogComponent } from './instruction-dialog/instruction-dialog.component';
 
 @NgModule({
-  declarations: [AreYouSureDialogComponent],
+  declarations: [AreYouSureDialogComponent, InstructionDialogComponent],
   imports: [
     CommonModule,
     MatDialogModule,

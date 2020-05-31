@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AreYouSureDialogComponent } from './are-you-sure-dialog/are-you-sure-dialog.component';
 import { Observable } from 'rxjs';
+import { InstructionDialogComponent } from './instruction-dialog/instruction-dialog.component';
 
 @Injectable({
   providedIn: 'root',
@@ -15,5 +16,9 @@ export class DialogService {
     });
 
     return dialogRef.afterClosed();
+  }
+
+  openRules() {
+    this.dialog.open(InstructionDialogComponent, { maxWidth: '700px' });
   }
 }
