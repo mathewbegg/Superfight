@@ -15,6 +15,7 @@ export enum CardColor {
 export enum SpecialSource {
   WHITEDECK = 'WHITE_DECK',
   BLACKDECK = 'BLACK_DECK',
+  WHITEHAND = 'WHITE_HAND',
   OPPONENT = 'OPPONENT',
   LEFTPLAYER = 'LEFT_PLAYER',
   CUSTOM = 'CUSTOM',

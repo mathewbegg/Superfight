@@ -17,6 +17,9 @@ export class SpecialResolverService {
       case SpecialSource.BLACKDECK:
         return this.resolveBlackDeckSpecial();
         break;
+      case SpecialSource.WHITEHAND:
+        return this.resolveWhiteHandSpecial();
+        break;
       case SpecialSource.OPPONENT:
         return this.resolveOpponentSpecial();
         break;
@@ -33,6 +36,9 @@ export class SpecialResolverService {
     return of('special result');
   }
   resolveBlackDeckSpecial(): Observable<string> {
+    return of('special result');
+  }
+  resolveWhiteHandSpecial(): Observable<string> {
     return of('special result');
   }
   resolveOpponentSpecial(): Observable<string> {

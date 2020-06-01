@@ -92,7 +92,10 @@ function userConnect(socket: Socket) {
 }
 
 async function fetchWhiteCatalogue() {
-  whiteCatalogue = await db.collection('whiteCatalogue').find().toArray();
+  whiteCatalogue = await db
+    .collection('testWhiteSpecialsCollection')
+    .find()
+    .toArray();
 }
 
 async function fetchBlackCatalogue() {
