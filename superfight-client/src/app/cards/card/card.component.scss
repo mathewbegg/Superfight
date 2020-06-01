@@ -49,3 +49,8 @@
   background-color: mat-color($primary, lighter);
   border-color: mat-color($primary);
 }
+
+.resolved-special {
+  margin-top: 24px;
+  color: mat-color($primary, lighter);
+}

@@ -12,7 +12,7 @@ export enum CardColor {
   BLACK = 'BLACK',
 }
 
-export enum CardSource {
+export enum SpecialSource {
   WHITEDECK = 'WHITE_DECK',
   BLACKDECK = 'BLACK_DECK',
   OPPONENT = 'OPPONENT',
@@ -23,12 +23,8 @@ export enum CardSource {
 export interface Card {
   text: string;
   color: string;
-  blanks?: BlankConfig[];
-}
-
-export interface BlankConfig {
-  source: CardSource;
-  amount: number;
+  specials?: SpecialSource[];
+  resolvedSpecial?: string;
 }
 
 export interface Fighter {}

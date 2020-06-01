@@ -15,7 +15,8 @@ import {
 } from '../../../shared-models';
 import { UiState, BLANK_UI_STATE } from './models/game.models';
 import { CommandJoinRoom } from '../../../shared-models';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, forkJoin } from 'rxjs';
+import { SpecialResolverService } from './special-resolver.service';
 
 @Injectable({
   providedIn: 'root',
@@ -25,7 +26,11 @@ export class GameManagerService {
     BLANK_UI_STATE
   );
 
-  constructor(private socket: Socket, private router: Router) {}
+  constructor(
+    private socket: Socket,
+    private router: Router,
+    private specialResolver: SpecialResolverService
+  ) {}
 
   connectToGame(name: string, roomName: string) {
     this.uiState$.next({
@@ -94,21 +99,73 @@ export class GameManagerService {
   }
 
   lockInFighterSelection() {
-    if (
-      this.uiState$.value.whiteSelection &&
-      this.uiState$.value.blackSelection
-    ) {
+    const whiteSelection = this.uiState$.value.whiteSelection;
+    const blackSelection = this.uiState$.value.blackSelection;
+    if (whiteSelection && blackSelection) {
       this.uiState$.next({
         ...this.uiState$.value,
         lockedIn: true,
       });
-      this.socket.emit(
-        'commandToServer',
-        new CommandFighterSelection({
-          white: this.uiState$.value.whiteSelection,
-          black: this.uiState$.value.blackSelection,
-        })
-      );
+      if (!whiteSelection.specials && !blackSelection.specials) {
+        this.sendFighterSelection();
+      } else {
+        this.resolveSpecials();
+      }
+    }
+  }
+
+  sendFighterSelection() {
+    this.socket.emit(
+      'commandToServer',
+      new CommandFighterSelection({
+        white: this.uiState$.value.whiteSelection,
+        black: this.uiState$.value.blackSelection,
+      })
+    );
+  }
+
+  resolveSpecials() {
+    const whiteSelection = this.uiState$.value.whiteSelection;
+    const blackSelection = this.uiState$.value.blackSelection;
+    let whiteReady = false;
+    let blackReady = false;
+    let whiteSpecials$ = [];
+    let blackSpecials$ = [];
+    if (whiteSelection.specials) {
+      whiteSelection.specials.forEach((special) => {
+        whiteSpecials$.push(this.specialResolver.resolveSpecial(special));
+      });
+      forkJoin(...whiteSpecials$).subscribe((res) => {
+        res.forEach((text: string) => {
+          whiteSelection.resolvedSpecial = whiteSelection.resolvedSpecial
+            ? whiteSelection.resolvedSpecial.concat(` ${text}`)
+            : text;
+        });
+        whiteReady = true;
+        if (blackReady) {
+          this.sendFighterSelection();
+        }
+      });
+    } else {
+      whiteReady = true;
+    }
+    if (blackSelection.specials) {
+      blackSelection.specials.forEach((special) => {
+        blackSpecials$.push(this.specialResolver.resolveSpecial(special));
+      });
+      forkJoin(...blackSpecials$).subscribe((res) => {
+        res.forEach((text: string) => {
+          blackSelection.resolvedSpecial = blackSelection.resolvedSpecial
+            ? blackSelection.resolvedSpecial.concat(` ${text}`)
+            : text;
+        });
+        blackReady = true;
+        if (whiteReady) {
+          this.sendFighterSelection();
+        }
+      });
+    } else {
+      blackReady = true;
     }
   }
 
