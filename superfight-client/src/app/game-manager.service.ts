@@ -127,13 +127,15 @@ export class GameManagerService {
   resolveSpecials() {
     const whiteSelection = this.uiState$.value.whiteSelection;
     const blackSelection = this.uiState$.value.blackSelection;
-    let whiteReady = false;
-    let blackReady = false;
+    let whiteReady = !whiteSelection.specials;
+    let blackReady = !blackSelection.specials;
     let whiteSpecials$ = [];
     let blackSpecials$ = [];
-    if (whiteSelection.specials) {
+    if (!whiteReady) {
       whiteSelection.specials.forEach((special) => {
-        whiteSpecials$.push(this.specialResolver.resolveSpecial(special));
+        whiteSpecials$.push(
+          this.specialResolver.resolveSpecial(special, this.uiState$.value)
+        );
       });
       forkJoin(...whiteSpecials$).subscribe((res) => {
         res.forEach((text: string) => {
@@ -146,12 +148,12 @@ export class GameManagerService {
           this.sendFighterSelection();
         }
       });
-    } else {
-      whiteReady = true;
     }
-    if (blackSelection.specials) {
+    if (!blackReady) {
       blackSelection.specials.forEach((special) => {
-        blackSpecials$.push(this.specialResolver.resolveSpecial(special));
+        blackSpecials$.push(
+          this.specialResolver.resolveSpecial(special, this.uiState$.value)
+        );
       });
       forkJoin(...blackSpecials$).subscribe((res) => {
         res.forEach((text: string) => {
@@ -164,8 +166,6 @@ export class GameManagerService {
           this.sendFighterSelection();
         }
       });
-    } else {
-      blackReady = true;
     }
   }
 
