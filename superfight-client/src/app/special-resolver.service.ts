@@ -2,8 +2,6 @@ import { Injectable } from '@angular/core';
 import { SpecialSource } from '../../../shared-models/shared-models';
 import { DialogService } from './dialogs/dialog.service';
 import { Observable, of } from 'rxjs';
-import { GameManagerService } from './game-manager.service';
-import { BaseUiStateComponent } from './models/base-ui-state.component';
 import { UiState } from './models/game.models';
 
 @Injectable({
@@ -40,11 +38,11 @@ export class SpecialResolverService {
   }
 
   resolveBlackDeckSpecial(uiState: UiState): Observable<string> {
-    return of('special result');
+    return this.dialogService.handSpecial(uiState.privateState.blackOptions);
   }
 
   resolveWhiteHandSpecial(uiState: UiState): Observable<string> {
-    return of('special result');
+    return this.dialogService.handSpecial(uiState.privateState.whiteOptions);
   }
 
   resolveOpponentSpecial(uiState: UiState): Observable<string> {
@@ -67,3 +65,5 @@ export class SpecialResolverService {
     return this.dialogService.customSpecial();
   }
 }
+
+//TODO nested special resolving

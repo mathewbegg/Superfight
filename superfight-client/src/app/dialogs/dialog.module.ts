@@ -12,12 +12,15 @@ import { InstructionDialogComponent } from './instruction-dialog/instruction-dia
 import { CustomSpecialDialogComponent } from './custom-special-dialog/custom-special-dialog.component';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
+import { HandSpecialDialogComponent } from './hand-special-dialog/hand-special-dialog.component';
+import { CardsModule } from '../cards/cards.module';
 
 @NgModule({
   declarations: [
     AreYouSureDialogComponent,
     InstructionDialogComponent,
     CustomSpecialDialogComponent,
+    HandSpecialDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -26,6 +29,7 @@ import { MatInputModule } from '@angular/material/input';
     MatButtonModule,
     FormsModule,
     MatInputModule,
+    CardsModule,
   ],
   providers: [
     DialogService,

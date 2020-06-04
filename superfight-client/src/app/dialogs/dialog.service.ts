@@ -4,6 +4,8 @@ import { AreYouSureDialogComponent } from './are-you-sure-dialog/are-you-sure-di
 import { Observable } from 'rxjs';
 import { InstructionDialogComponent } from './instruction-dialog/instruction-dialog.component';
 import { CustomSpecialDialogComponent } from './custom-special-dialog/custom-special-dialog.component';
+import { HandSpecialDialogComponent } from './hand-special-dialog/hand-special-dialog.component';
+import { Card } from '../models/game.models';
 
 @Injectable({
   providedIn: 'root',
@@ -25,6 +27,14 @@ export class DialogService {
 
   customSpecial() {
     const dialogRef = this.dialog.open(CustomSpecialDialogComponent);
+
+    return dialogRef.afterClosed();
+  }
+
+  handSpecial(cards: Card[]) {
+    const dialogRef = this.dialog.open(HandSpecialDialogComponent, {
+      data: cards,
+    });
 
     return dialogRef.afterClosed();
   }
