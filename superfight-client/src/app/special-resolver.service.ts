@@ -38,15 +38,22 @@ export class SpecialResolverService {
   resolveWhiteDeckSpecial(uiState: UiState) {
     return of('special result');
   }
+
   resolveBlackDeckSpecial(uiState: UiState): Observable<string> {
     return of('special result');
   }
+
   resolveWhiteHandSpecial(uiState: UiState): Observable<string> {
     return of('special result');
   }
+
   resolveOpponentSpecial(uiState: UiState): Observable<string> {
-    return of('special result');
+    const phase = uiState.gameState.phase;
+    return of(
+      phase.playerA.id === uiState.id ? phase.playerB.name : phase.playerA.name
+    );
   }
+
   resolveLeftPlayerSpecial(uiState: UiState): Observable<string> {
     const playerIndex = uiState.playerList.findIndex(
       (player) => player.id === uiState.id
@@ -55,6 +62,7 @@ export class SpecialResolverService {
       playerIndex === 0 ? uiState.playerList.length - 1 : playerIndex - 1;
     return of(uiState.playerList[leftPlayerIndex].name);
   }
+
   resolveCustomSpecial(): Observable<string> {
     return this.dialogService.customSpecial();
   }
