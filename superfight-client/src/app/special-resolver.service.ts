@@ -33,12 +33,12 @@ export class SpecialResolverService {
     }
   }
 
-  resolveWhiteDeckSpecial(uiState: UiState) {
-    return of('special result');
+  resolveWhiteDeckSpecial(uiState: UiState): Observable<string> {
+    return of('!WHITE_DECK');
   }
 
   resolveBlackDeckSpecial(uiState: UiState): Observable<string> {
-    return this.dialogService.handSpecial(uiState.privateState.blackOptions);
+    return of('!BLACK_DECK');
   }
 
   resolveWhiteHandSpecial(uiState: UiState): Observable<string> {
@@ -67,3 +67,4 @@ export class SpecialResolverService {
 }
 
 //TODO nested special resolving
+//TODO sanitize custom input

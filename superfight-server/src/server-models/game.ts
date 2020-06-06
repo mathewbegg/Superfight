@@ -175,10 +175,14 @@ export class SuperfightGame {
   }
 
   selectFighter(playerId: string, command: CommandToServer) {
+    const extraCardsForWhite = this.resolveSpecials(command.payload.white);
+    const extraCardsForBlack = this.resolveSpecials(command.payload.black);
     if (playerId === this.playerA.id) {
       this.playerA.selectedFighter = [
         command.payload.white,
+        ...extraCardsForWhite,
         command.payload.black,
+        ...extraCardsForBlack,
         this.blackDeck.drawCard(),
       ];
       if (this.playerB.selectedFighter) {
@@ -188,13 +192,31 @@ export class SuperfightGame {
     if (playerId === this.playerB.id) {
       this.playerB.selectedFighter = [
         command.payload.white,
+        ...extraCardsForWhite,
         command.payload.black,
+        ...extraCardsForBlack,
         this.blackDeck.drawCard(),
       ];
       if (this.playerA.selectedFighter) {
         this.advanceToDebatePhase();
       }
     }
+  }
+
+  /**strips the !WHITE_DECK and !BLACK_DECK tokens from the resolvedSpecials string, and builds the corresponding array of drawn cards */
+  resolveSpecials(card: Card): Card[] {
+    const numWhite = (card?.resolvedSpecial?.match('!WHITE_DECK') || []).length;
+    const numBlack = (card?.resolvedSpecial?.match('!BLACK_DECK') || []).length;
+    card.text.replace(/!WHITE_DECK|!BLACK_DECK/gm, '');
+
+    const res: Card[] = [];
+    for (let i = 0; i < numWhite; i++) {
+      res.push(this.whiteDeck.drawCard());
+    }
+    for (let i = 0; i < numBlack; i++) {
+      res.push(this.blackDeck.drawCard());
+    }
+    return res;
   }
 
   advanceToDebatePhase() {

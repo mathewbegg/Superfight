@@ -23,5 +23,10 @@ export class CardComponent implements OnInit {
     }
   }
 
+  /**Returns a display string stripped of any !WHITE_DECK and !BLACK_DECK tokens*/
+  display(text: string) {
+    return text?.replace(/!WHITE_DECK|!BLACK_DECK/gm, '');
+  }
+
   //TODO find longest card text and ensure it fits
 }

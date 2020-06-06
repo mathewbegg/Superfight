@@ -9,6 +9,6 @@
   (click)="selectCard()"
 >
   {{ card.text }}
-  <div class="resolved-special">{{ card?.resolvedSpecial }}</div>
+  <div class="resolved-special">{{ display(card?.resolvedSpecial) }}</div>
 </div>
 <div *ngIf="!card && blankSlot" class="blank-slot"></div>
