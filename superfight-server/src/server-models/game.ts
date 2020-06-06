@@ -156,6 +156,7 @@ export class SuperfightGame {
       this.playerA = this.playerList[0];
       this.playerB = this.playerList[1];
     } else if (!rematch) {
+      //FIXME if a currently playing player leaves, and then their fighter loses, there is an error because they cannot be found here
       const previousLoser =
         champion.id === this.playerA.id ? this.playerB : this.playerA;
       let challengerIndex = this.playerList
