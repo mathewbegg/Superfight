@@ -22,7 +22,7 @@ export interface UiState {
   isPlaying: boolean;
   isChampion: boolean;
   gameState: GameState;
-  privateState: any;
+  privateState: any; //TODO more typing
   whiteSelection?: Card;
   blackSelection?: Card;
   lockedIn?: boolean;

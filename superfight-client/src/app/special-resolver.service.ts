@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SpecialSource } from '../../../shared-models/shared-models';
+import { SpecialSource, Card } from '../../../shared-models/shared-models';
 import { DialogService } from './dialogs/dialog.service';
 import { Observable, of } from 'rxjs';
 import { UiState } from './models/game.models';
@@ -42,7 +42,11 @@ export class SpecialResolverService {
   }
 
   resolveWhiteHandSpecial(uiState: UiState): Observable<string> {
-    return this.dialogService.handSpecial(uiState.privateState.whiteOptions);
+    return this.dialogService.handSpecial(
+      uiState.privateState.whiteOptions.filter(
+        (card: Card) => card.text !== uiState?.whiteSelection?.text
+      )
+    );
   }
 
   resolveOpponentSpecial(uiState: UiState): Observable<string> {
