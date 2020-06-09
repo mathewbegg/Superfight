@@ -2,3 +2,11 @@ mat-toolbar {
   display: flex;
   justify-content: space-between;
 }
+
+.toolbar-section {
+  display: flex;
+  align-items: center;
+  .room-name {
+    margin-right: 48px;
+  }
+}

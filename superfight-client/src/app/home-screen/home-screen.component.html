@@ -1,6 +1,12 @@
-<label for="name-field">Enter Your Name</label>
-<input id="name-field" [(ngModel)]="name" />
-
-<label for="room-field">Room Code</label>
-<input id="room-field" [(ngModel)]="roomName" />
-<button (click)="connectToGame()">Connect</button>
+<div class="join-form">
+  <h2>Join a game</h2>
+  <mat-form-field appearance="outline">
+    <mat-label>Name</mat-label>
+    <input matInput placeholder="e.g. George" [(ngModel)]="name" />
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Room</mat-label>
+    <input matInput placeholder="e.g. YEET" [(ngModel)]="roomName" />
+  </mat-form-field>
+  <button mat-button color="accent" (click)="connectToGame()">Connect</button>
+</div>

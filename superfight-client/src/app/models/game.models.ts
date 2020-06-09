@@ -23,6 +23,7 @@ export interface UiState {
   isChampion: boolean;
   gameState: GameState;
   privateState: any; //TODO more typing
+  roomName?: string;
   whiteSelection?: Card;
   blackSelection?: Card;
   lockedIn?: boolean;

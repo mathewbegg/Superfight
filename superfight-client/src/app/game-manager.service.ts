@@ -37,6 +37,7 @@ export class GameManagerService {
       ...this.uiState$.value,
       name: name,
       id: this.socket.ioSocket.id,
+      roomName: roomName,
     });
     this.router.navigateByUrl('/game');
     this.socket.connect();
@@ -77,6 +78,10 @@ export class GameManagerService {
 
   leaveGame() {
     this.router.navigateByUrl('');
+    this.uiState$.next({
+      ...this.uiState$.value,
+      roomName: '',
+    });
     this.socket.emit('leaveRoom');
   }
 

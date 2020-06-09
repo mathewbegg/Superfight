@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import * as env from '../../environments/environment';
 import { GameManagerService } from '../game-manager.service';
+import { FormControl, Validators } from '@angular/forms';
+import { MatFormFieldControl } from '@angular/material/form-field';
 
 @Component({
   selector: 'spf-home-screen',
@@ -22,11 +24,8 @@ export class HomeScreenComponent implements OnInit {
   }
 
   connectToGame() {
-    if (this.name.length) {
-      this.gameService.connectToGame(this.name, this.roomName);
+    if (this.name.length && this.roomName.length) {
+      this.gameService.connectToGame(this.name, this.roomName.toUpperCase());
     }
   }
-
-  //TODO style home screen
-  //TODO name restrictions
 }

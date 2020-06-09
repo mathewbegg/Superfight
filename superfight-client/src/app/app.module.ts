@@ -14,10 +14,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { CardsModule } from './cards/cards.module';
 import { BoardsModule } from './boards/boards.module';
 import { WinnerBoardComponent } from './boards/winner-board/winner-board.component';
 import { DialogModule } from './dialogs/dialog.module';
+import { MatInputModule } from '@angular/material/input';
 
 @NgModule({
   declarations: [
@@ -40,6 +42,8 @@ import { DialogModule } from './dialogs/dialog.module';
     MatToolbarModule,
     MatSidenavModule,
     MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
   ],
   bootstrap: [AppComponent],
 })
