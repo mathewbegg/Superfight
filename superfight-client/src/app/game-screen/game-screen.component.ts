@@ -32,6 +32,14 @@ export class GameScreenComponent extends BaseUiStateComponent {
   }
 
   newGame() {
-    this.gameManager.newGame();
+    if (this.uiState.gameState.phase.phaseName === PhaseName.WAITING) {
+      this.gameManager.newGame();
+    } else {
+      this.dialogService.areYouSure().subscribe((confirmNew) => {
+        if (confirmNew) {
+          this.gameManager.newGame();
+        }
+      });
+    }
   }
 }
