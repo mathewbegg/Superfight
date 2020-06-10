@@ -1,0 +1,15 @@
+{
+  "name": "scripts",
+  "version": "1.0.0",
+  "description": "Scripts for migrating data etc.",
+  "main": "migrate-db-to-aws.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mathew Begg",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.693.0",
+    "mongodb": "^3.5.8"
+  }
+}
