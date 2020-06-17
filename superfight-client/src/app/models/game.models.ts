@@ -22,7 +22,7 @@ export interface UiState {
   isPlaying: boolean;
   isChampion: boolean;
   gameState: GameState;
-  privateState: any; //TODO more typing
+  privateState: any;
   roomName?: string;
   whiteSelection?: Card;
   blackSelection?: Card;
