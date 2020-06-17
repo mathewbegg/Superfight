@@ -69,6 +69,3 @@ export class SpecialResolverService {
     return this.dialogService.customSpecial();
   }
 }
-
-//TODO nested special resolving
-//TODO sanitize custom input

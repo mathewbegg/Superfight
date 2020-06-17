@@ -1,5 +1,5 @@
 @import '~@angular/material/theming';
-@import '../../../assets/theme.scss'; //TODO paths
+@import '../../../assets/theme.scss';
 
 @mixin card-dimensions($width, $hoverEffect: true) {
   width: $width;

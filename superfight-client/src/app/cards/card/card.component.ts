@@ -27,6 +27,4 @@ export class CardComponent implements OnInit {
   display(text: string) {
     return text?.replace(/!WHITE_DECK|!BLACK_DECK/gm, '');
   }
-
-  //TODO find longest card text and ensure it fits
 }
