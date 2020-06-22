@@ -11,3 +11,9 @@ export interface RoomList {
 export interface AllPlayersList {
   [playerId: string]: string;
 }
+
+/**Abstracted so I can constantly flip between MongoDB and DynamoDB as I change my mind */
+export interface CatalogueConnection {
+  getWhiteCatalogue(): Card[];
+  getBlackCatalogue(): Card[];
+}
