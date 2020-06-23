@@ -14,6 +14,6 @@ export interface AllPlayersList {
 
 /**Abstracted so I can constantly flip between MongoDB and DynamoDB as I change my mind */
 export interface CatalogueConnection {
-  getWhiteCatalogue(): Card[];
-  getBlackCatalogue(): Card[];
+  getWhiteCatalogue(): Promise<Card[]>;
+  getBlackCatalogue(): Promise<Card[]>;
 }
