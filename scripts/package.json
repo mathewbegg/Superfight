@@ -11,5 +11,10 @@
   "dependencies": {
     "aws-sdk": "^2.701.0",
     "mongodb": "^3.5.8"
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "tabWidth": 2,
+    "singleQuote": true
   }
 }

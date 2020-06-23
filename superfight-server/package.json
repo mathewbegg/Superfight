@@ -22,5 +22,10 @@
     "rxjs": "^6.5.5",
     "socket.io": "^2.3.0",
     "typescript": "^3.9.5"
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "tabWidth": 2,
+    "singleQuote": true
   }
 }
