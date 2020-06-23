@@ -1,6 +1,5 @@
-import { GameState, Card, GamePhase } from '../../../shared-models';
+import { Card } from '../../../shared-models';
 import { SuperfightGame } from './game';
-import { Deck } from './deck';
 
 /**A map of roomNames to their game object */
 export interface RoomList {
