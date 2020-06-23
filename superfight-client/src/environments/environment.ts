@@ -4,27 +4,27 @@
 
 export const environment = {
   production: false,
+  serverAddress: 'http://localhost:3000',
+  mockNames: [
+    'Mathew',
+    'John',
+    'JP',
+    'Justin',
+    'Sheldon',
+    'Joeffre',
+    'Ryan',
+    'Nathan',
+    'Jefrey',
+    'Argus',
+    'Paul',
+    'Joyce',
+    'Christine',
+    'Victoria',
+    'Nivethan',
+    'Shreya',
+    'Ernest',
+  ],
 };
-
-export const mockNames = [
-  'Mathew',
-  'John',
-  'JP',
-  'Justin',
-  'Sheldon',
-  'Joeffre',
-  'Ryan',
-  'Nathan',
-  'Jefrey',
-  'Argus',
-  'Paul',
-  'Joyce',
-  'Christine',
-  'Victoria',
-  'Nivethan',
-  'Shreya',
-  'Ernest',
-];
 
 /*
  * For easier debugging in development mode, you can import the following file

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import * as env from '../../environments/environment';
+import { environment } from '../../environments/environment';
 import { GameManagerService } from '../game-manager.service';
 import { FormControl, Validators } from '@angular/forms';
 import { MatFormFieldControl } from '@angular/material/form-field';
@@ -17,9 +17,11 @@ export class HomeScreenComponent implements OnInit {
   constructor(private gameService: GameManagerService) {}
 
   ngOnInit() {
-    if (!env.environment.production) {
+    if (!environment.production) {
       this.name =
-        env.mockNames[Math.floor(Math.random() * env.mockNames.length)];
+        environment.mockNames[
+          Math.floor(Math.random() * environment.mockNames.length)
+        ];
     }
   }
 

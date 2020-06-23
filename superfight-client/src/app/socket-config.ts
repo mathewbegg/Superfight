@@ -1,6 +1,7 @@
-import { SocketIoConfig } from 'ngx-socket-io';
+import { SocketIoConfig } from "ngx-socket-io";
+import { environment } from "src/environments/environment";
 
 export const appSocketConfig: SocketIoConfig = {
-  url: 'http://localhost:3000',
+  url: environment.serverAddress,
   options: {},
 };
