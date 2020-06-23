@@ -1,8 +1,7 @@
 import * as express from 'express';
 import { Server } from 'http';
-import { MongoClient, Db } from 'mongodb';
 import { Socket } from 'socket.io';
-import { RoomList, AllPlayersList } from './server-models';
+import { RoomList, AllPlayersList, CatalogueConnection } from './server-models';
 import {
   CommandJoinRoom,
   Card,
@@ -11,9 +10,8 @@ import {
   GameState,
 } from '../../shared-models';
 import { SuperfightGame } from './server-models/game';
+import { DynamoCatalogue } from './server-models/dynamoCatalogue';
 
-const mongoConnectionString = 'mongodb://localhost:27017';
-var db: Db;
 var whiteCatalogue: Card[];
 var blackCatalogue: Card[];
 
@@ -23,26 +21,21 @@ const server = new Server(express()).listen(3000, () => {
 
 const io = require('socket.io')(server);
 
+const catalogueConnection: CatalogueConnection = new DynamoCatalogue();
 const rooms: RoomList = {};
 const allPlayers: AllPlayersList = {};
 
-MongoClient.connect(
-  mongoConnectionString,
-  {
-    useUnifiedTopology: true,
-  },
-  (err, client) => {
-    if (err) return console.error(err);
-    console.log('mongoDB connected');
-    db = client.db('superfightDB');
-    fetchWhiteCatalogue();
-    fetchBlackCatalogue();
-    io.on('connection', (socket: Socket) => {
-      userConnect(socket);
-      console.log(`${socket.id} connected`);
-    });
-  }
-);
+Promise.all([
+  catalogueConnection.getWhiteCatalogue(),
+  catalogueConnection.getBlackCatalogue(),
+]).then((decks) => {
+  whiteCatalogue = decks[0];
+  blackCatalogue = decks[1];
+  io.on('connection', (socket: Socket) => {
+    userConnect(socket);
+    console.log(`${socket.id} connected`);
+  });
+});
 
 function userConnect(socket: Socket) {
   socket.on('joinRoom', (action: CommandJoinRoom) => {
@@ -89,12 +82,4 @@ function userConnect(socket: Socket) {
       socket.leave(roomName);
     });
   });
-}
-
-async function fetchWhiteCatalogue() {
-  whiteCatalogue = await db.collection('whiteCatalogue').find().toArray();
-}
-
-async function fetchBlackCatalogue() {
-  blackCatalogue = await db.collection('blackCatalogue').find().toArray();
 }

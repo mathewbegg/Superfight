@@ -9,7 +9,7 @@
   "author": "Mathew Begg",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.693.0",
+    "aws-sdk": "^2.701.0",
     "mongodb": "^3.5.8"
   }
 }
