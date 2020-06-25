@@ -202,18 +202,27 @@ export class SuperfightGame {
     }
   }
 
-  /**strips the !WHITE_DECK and !BLACK_DECK tokens from the resolvedSpecials string, and builds the corresponding array of drawn cards */
+  /**strips the !WHITE_DECK and !BLACK_DECK tokens from the resolvedSpecials string, and builds the corresponding array of drawn cards.
+   * If a special card is drawn, it is ignored and a new card is drawn*/
   resolveSpecials(card: Card): Card[] {
     const numWhite = (card?.resolvedSpecial?.match('!WHITE_DECK') || []).length;
     const numBlack = (card?.resolvedSpecial?.match('!BLACK_DECK') || []).length;
     card.text.replace(/!WHITE_DECK|!BLACK_DECK/gm, '');
 
     const res: Card[] = [];
+    let drawnWhiteCard: Card;
+    let drawnBlackCard: Card;
     for (let i = 0; i < numWhite; i++) {
-      res.push(this.whiteDeck.drawCard());
+      while (!drawnWhiteCard || drawnWhiteCard.specials) {
+        drawnWhiteCard = this.whiteDeck.drawCard();
+      }
+      res.push(drawnWhiteCard);
     }
     for (let i = 0; i < numBlack; i++) {
-      res.push(this.blackDeck.drawCard());
+      while (!drawnBlackCard || drawnBlackCard.specials) {
+        drawnBlackCard = this.blackDeck.drawCard();
+      }
+      res.push(drawnBlackCard);
     }
     return res;
   }
