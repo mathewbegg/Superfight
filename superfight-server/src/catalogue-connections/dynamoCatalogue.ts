@@ -1,4 +1,4 @@
-import { CatalogueConnection } from './server-models';
+import { CatalogueConnection } from '../server-models/server-models';
 import { Card } from '../../../shared-models';
 
 export class DynamoCatalogue implements CatalogueConnection {
