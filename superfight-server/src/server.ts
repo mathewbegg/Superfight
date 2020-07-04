@@ -8,10 +8,10 @@ import {
   CommandToServer,
   PrivateState,
   GameState,
+  EventName,
 } from '../../shared-models';
 import { SuperfightGame } from './server-models/game';
 import { DynamoCatalogue } from './catalogue-connections/dynamoCatalogue';
-import { LocalJsonCatalogue } from './catalogue-connections/localJsonCatalogue';
 
 var whiteCatalogue: Card[];
 var blackCatalogue: Card[];
@@ -22,7 +22,7 @@ const server = new Server(express()).listen(3000, () => {
 
 const io = require('socket.io')(server);
 
-const catalogueConnection: CatalogueConnection = new LocalJsonCatalogue();
+const catalogueConnection: CatalogueConnection = new DynamoCatalogue();
 const rooms: RoomList = {};
 const allPlayers: AllPlayersList = {};
 
@@ -39,7 +39,7 @@ Promise.all([
 });
 
 function userConnect(socket: Socket) {
-  socket.on('joinRoom', (action: CommandJoinRoom) => {
+  socket.on(EventName.JOIN_ROOM, (action: CommandJoinRoom) => {
     const player = action.payload.player;
     const roomName = action.payload.roomName;
     socket.join(roomName);
@@ -57,22 +57,22 @@ function userConnect(socket: Socket) {
       allPlayers[player.id] = roomName;
       console.log(`${player.name}-${player.id} created room: ${roomName}`);
       rooms[roomName].gameState.subscribe((gameState: GameState) => {
-        io.to(roomName).emit('updatePublicState', gameState);
+        io.to(roomName).emit(EventName.UPDATE_PUBLIC_STATE, gameState);
       });
       rooms[roomName].privateState.subscribe((privateState: PrivateState) => {
         if (privateState?.playerId) {
           io.to(privateState.playerId).emit(
-            'updatePrivateState',
+            EventName.UPDATE_PRIVATE_STATE,
             privateState.payload
           );
         }
       });
     }
-    socket.emit('confirmGameConnection');
-    socket.on('commandToServer', (command: CommandToServer) => {
+    socket.emit(EventName.CONFIRM_GAME_CONNECTION);
+    socket.on(EventName.COMMAND_TO_SERVER, (command: CommandToServer) => {
       rooms[roomName].parseCommand(player.id, command);
     });
-    socket.on('leaveRoom', () => {
+    socket.on(EventName.LEAVE_ROOM, () => {
       if (rooms[roomName]) {
         rooms[roomName].removePlayer(player);
         console.log(`${player.name}-${player.id} left room: ${roomName}`);

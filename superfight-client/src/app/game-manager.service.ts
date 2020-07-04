@@ -12,6 +12,7 @@ import {
   Player,
   GamePhase,
   PrivateState,
+  EventName,
 } from '../../../shared-models';
 import { UiState, BLANK_UI_STATE } from './models/game.models';
 import { CommandJoinRoom } from '../../../shared-models';
@@ -41,16 +42,16 @@ export class GameManagerService {
     });
     this.socket.connect();
     this.socket.emit(
-      'joinRoom',
+      EventName.JOIN_ROOM,
       new CommandJoinRoom({
         player: { id: this.socket.ioSocket.id, name: this.uiState$.value.name },
         roomName: roomName,
       })
     );
-    this.socket.on('confirmGameConnection', () => {
+    this.socket.on(EventName.CONFIRM_GAME_CONNECTION, () => {
       this.router.navigateByUrl('/game');
     });
-    this.socket.on('updatePublicState', (gameState: GameState) => {
+    this.socket.on(EventName.UPDATE_PUBLIC_STATE, (gameState: GameState) => {
       console.log('public state: ', gameState);
       this.uiState$.next({
         ...this.uiState$.value,
@@ -61,13 +62,16 @@ export class GameManagerService {
         isChampion: this.checkIfChampion(gameState.phase),
       });
     });
-    this.socket.on('updatePrivateState', (privateState: PrivateState) => {
-      console.log('private state: ', privateState);
-      this.uiState$.next({
-        ...this.uiState$.value,
-        privateState: privateState,
-      });
-    });
+    this.socket.on(
+      EventName.UPDATE_PRIVATE_STATE,
+      (privateState: PrivateState) => {
+        console.log('private state: ', privateState);
+        this.uiState$.next({
+          ...this.uiState$.value,
+          privateState: privateState,
+        });
+      }
+    );
   }
 
   getUiState(): Observable<UiState> {
@@ -75,7 +79,7 @@ export class GameManagerService {
   }
 
   startVoting() {
-    this.socket.emit('commandToServer', new CommandStartVoting());
+    this.socket.emit(EventName.COMMAND_TO_SERVER, new CommandStartVoting());
   }
 
   leaveGame() {
@@ -84,11 +88,11 @@ export class GameManagerService {
       ...this.uiState$.value,
       roomName: '',
     });
-    this.socket.emit('leaveRoom');
+    this.socket.emit(EventName.LEAVE_ROOM);
   }
 
   newGame() {
-    this.socket.emit('commandToServer', new CommandNewGame());
+    this.socket.emit(EventName.COMMAND_TO_SERVER, new CommandNewGame());
   }
 
   selectWhiteCard(card: Card) {
@@ -123,7 +127,7 @@ export class GameManagerService {
 
   sendFighterSelection() {
     this.socket.emit(
-      'commandToServer',
+      EventName.COMMAND_TO_SERVER,
       new CommandFighterSelection({
         white: this.uiState$.value.whiteSelection,
         black: this.uiState$.value.blackSelection,
@@ -188,7 +192,7 @@ export class GameManagerService {
   }
 
   sendVote(vote: string) {
-    this.socket.emit('commandToServer', new CommandVote(vote));
+    this.socket.emit(EventName.COMMAND_TO_SERVER, new CommandVote(vote));
   }
 
   canActivate(): boolean {
