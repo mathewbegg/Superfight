@@ -10,7 +10,8 @@ import {
   GameState,
 } from '../../shared-models';
 import { SuperfightGame } from './server-models/game';
-import { DynamoCatalogue } from './server-models/dynamoCatalogue';
+import { DynamoCatalogue } from './catalogue-connections/dynamoCatalogue';
+import { LocalJsonCatalogue } from './catalogue-connections/localJsonCatalogue';
 
 var whiteCatalogue: Card[];
 var blackCatalogue: Card[];
@@ -21,7 +22,7 @@ const server = new Server(express()).listen(3000, () => {
 
 const io = require('socket.io')(server);
 
-const catalogueConnection: CatalogueConnection = new DynamoCatalogue();
+const catalogueConnection: CatalogueConnection = new LocalJsonCatalogue();
 const rooms: RoomList = {};
 const allPlayers: AllPlayersList = {};
 
@@ -67,6 +68,7 @@ function userConnect(socket: Socket) {
         }
       });
     }
+    socket.emit('confirmGameConnection');
     socket.on('commandToServer', (command: CommandToServer) => {
       rooms[roomName].parseCommand(player.id, command);
     });

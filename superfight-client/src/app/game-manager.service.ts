@@ -39,7 +39,6 @@ export class GameManagerService {
       id: this.socket.ioSocket.id,
       roomName: roomName,
     });
-    this.router.navigateByUrl('/game');
     this.socket.connect();
     this.socket.emit(
       'joinRoom',
@@ -48,6 +47,9 @@ export class GameManagerService {
         roomName: roomName,
       })
     );
+    this.socket.on('confirmGameConnection', () => {
+      this.router.navigateByUrl('/game');
+    });
     this.socket.on('updatePublicState', (gameState: GameState) => {
       console.log('public state: ', gameState);
       this.uiState$.next({
