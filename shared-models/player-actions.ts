@@ -2,6 +2,7 @@ import { Card, Player } from './shared-models';
 
 export enum PlayerAction {
   JOIN_ROOM = 'JOIN_ROOM',
+  CREATE_ROOM = 'CREATE_ROOM',
   NEW_GAME = 'NEW_GAME',
   FIGHTER_SELECTION = 'FIGHTER_SELECTION',
   PLAYER_VOTE = 'PLAYER_VOTE',
@@ -27,9 +28,17 @@ export class CommandJoinRoom implements CommandToServer {
   action = PlayerAction.JOIN_ROOM;
   payload: RoomJoinRequest;
 
-  constructor(payload: RoomJoinRequest) {
-    this.payload = payload;
+  constructor(playerId: string, playerName: string, roomName: string) {
+    this.payload = {
+      player: { id: playerId, name: playerName },
+      roomName: roomName,
+    };
   }
+}
+
+export class CommandCreateRoom implements CommandToServer {
+  action = PlayerAction.CREATE_ROOM;
+  payload: null;
 }
 
 export class CommandNewGame implements CommandToServer {
@@ -51,6 +60,9 @@ export class CommandStartVoting implements CommandToServer {
   payload: null;
 }
 
+/**
+ * Vote for A or B, payload is 'A' or 'B'
+ */
 export class CommandVote implements CommandToServer {
   action = PlayerAction.PLAYER_VOTE;
   payload: string;

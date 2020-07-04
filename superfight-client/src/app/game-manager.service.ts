@@ -13,6 +13,7 @@ import {
   GamePhase,
   PrivateState,
   EventName,
+  CommandCreateRoom,
 } from '../../../shared-models';
 import { UiState, BLANK_UI_STATE } from './models/game.models';
 import { CommandJoinRoom } from '../../../shared-models';
@@ -31,26 +32,11 @@ export class GameManagerService {
     private socket: Socket,
     private router: Router,
     private specialResolver: SpecialResolverService
-  ) {}
+  ) {
+    socket.connect();
+  }
 
-  connectToGame(name: string, roomName: string) {
-    this.uiState$.next({
-      ...this.uiState$.value,
-      name: name,
-      id: this.socket.ioSocket.id,
-      roomName: roomName,
-    });
-    this.socket.connect();
-    this.socket.emit(
-      EventName.JOIN_ROOM,
-      new CommandJoinRoom({
-        player: { id: this.socket.ioSocket.id, name: this.uiState$.value.name },
-        roomName: roomName,
-      })
-    );
-    this.socket.on(EventName.CONFIRM_GAME_CONNECTION, () => {
-      this.router.navigateByUrl('/game');
-    });
+  subscribeToGameState() {
     this.socket.on(EventName.UPDATE_PUBLIC_STATE, (gameState: GameState) => {
       console.log('public state: ', gameState);
       this.uiState$.next({
@@ -72,6 +58,34 @@ export class GameManagerService {
         });
       }
     );
+  }
+
+  createGame(name: string) {
+    this.socket.emit(EventName.CREATE_ROOM, new CommandCreateRoom());
+    this.socket.on(EventName.CREATE_ROOM_SUCCESS, (roomCode: string) => {
+      this.joinGame(name, roomCode);
+    });
+  }
+
+  joinGame(name: string, roomName: string) {
+    this.uiState$.next({
+      ...this.uiState$.value,
+      name: name,
+      id: this.socket.ioSocket.id,
+      roomName: roomName,
+    });
+    this.subscribeToGameState();
+    this.socket.emit(
+      EventName.JOIN_ROOM,
+      new CommandJoinRoom(
+        this.socket.ioSocket.id,
+        this.uiState$.value.name,
+        roomName
+      )
+    );
+    this.socket.on(EventName.JOIN_ROOM_SUCCESS, () => {
+      this.router.navigateByUrl('/game');
+    });
   }
 
   getUiState(): Observable<UiState> {

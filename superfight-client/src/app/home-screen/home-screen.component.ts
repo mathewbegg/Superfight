@@ -25,9 +25,13 @@ export class HomeScreenComponent implements OnInit {
     }
   }
 
-  connectToGame() {
+  joinGame() {
     if (this.name.length && this.roomName.length) {
-      this.gameService.connectToGame(this.name, this.roomName.toUpperCase());
+      this.gameService.joinGame(this.name, this.roomName.toUpperCase());
     }
+  }
+
+  createGame() {
+    this.gameService.createGame(this.name);
   }
 }

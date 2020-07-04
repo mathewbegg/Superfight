@@ -39,36 +39,44 @@ Promise.all([
 });
 
 function userConnect(socket: Socket) {
+  socket.on(EventName.CREATE_ROOM, (answer) => {
+    const roomCode = genRoomCode(4);
+    rooms[roomCode] = new SuperfightGame(
+      roomCode,
+      whiteCatalogue,
+      blackCatalogue
+    );
+    console.log(`created room: ${roomCode}`);
+    rooms[roomCode].gameState.subscribe((gameState: GameState) => {
+      io.to(roomCode).emit(EventName.UPDATE_PUBLIC_STATE, gameState);
+    });
+    rooms[roomCode].privateState.subscribe((privateState: PrivateState) => {
+      if (privateState?.playerId) {
+        io.to(privateState.playerId).emit(
+          EventName.UPDATE_PRIVATE_STATE,
+          privateState.payload
+        );
+      }
+    });
+    socket.emit(EventName.CREATE_ROOM_SUCCESS, roomCode);
+  });
+
   socket.on(EventName.JOIN_ROOM, (action: CommandJoinRoom) => {
     const player = action.payload.player;
     const roomName = action.payload.roomName;
     socket.join(roomName);
+
     if (rooms[roomName]) {
       rooms[roomName].addPlayer(player);
       allPlayers[player.id] = roomName;
       console.log(`${player.name}-${player.id} joining room: ${roomName}`);
+      socket.emit(EventName.JOIN_ROOM_SUCCESS);
     } else {
-      rooms[roomName] = new SuperfightGame(
-        roomName,
-        whiteCatalogue,
-        blackCatalogue
+      console.error(
+        `${player.name}-${player.id} tried joining a room that doesn't exist: ${roomName}`
       );
-      rooms[roomName].addPlayer(player);
-      allPlayers[player.id] = roomName;
-      console.log(`${player.name}-${player.id} created room: ${roomName}`);
-      rooms[roomName].gameState.subscribe((gameState: GameState) => {
-        io.to(roomName).emit(EventName.UPDATE_PUBLIC_STATE, gameState);
-      });
-      rooms[roomName].privateState.subscribe((privateState: PrivateState) => {
-        if (privateState?.playerId) {
-          io.to(privateState.playerId).emit(
-            EventName.UPDATE_PRIVATE_STATE,
-            privateState.payload
-          );
-        }
-      });
     }
-    socket.emit(EventName.CONFIRM_GAME_CONNECTION);
+
     socket.on(EventName.COMMAND_TO_SERVER, (command: CommandToServer) => {
       rooms[roomName].parseCommand(player.id, command);
     });
@@ -84,4 +92,17 @@ function userConnect(socket: Socket) {
       socket.leave(roomName);
     });
   });
+}
+
+/**
+ * Generates a random room code of given length
+ * @param length length of the room code
+ */
+function genRoomCode(length: number) {
+  let result = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
 }
