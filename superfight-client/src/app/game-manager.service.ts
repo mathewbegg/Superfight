@@ -67,12 +67,12 @@ export class GameManagerService {
     });
   }
 
-  joinGame(name: string, roomName: string) {
+  joinGame(name: string, roomCode: string) {
     this.uiState$.next({
       ...this.uiState$.value,
       name: name,
       id: this.socket.ioSocket.id,
-      roomName: roomName,
+      roomName: roomCode,
     });
     this.subscribeToGameState();
     this.socket.emit(
@@ -80,11 +80,11 @@ export class GameManagerService {
       new CommandJoinRoom(
         this.socket.ioSocket.id,
         this.uiState$.value.name,
-        roomName
+        roomCode
       )
     );
     this.socket.on(EventName.JOIN_ROOM_SUCCESS, () => {
-      this.router.navigateByUrl('/game');
+      this.router.navigateByUrl(`/game/${roomCode}`);
     });
   }
 

@@ -8,7 +8,7 @@ const routes: Routes = [
   { path: '', component: HomeScreenComponent },
   { path: 'join/:roomCode', component: HomeScreenComponent },
   {
-    path: 'game',
+    path: 'game/:roomCode',
     component: GameScreenComponent,
     canActivate: [GameManagerService],
   },
