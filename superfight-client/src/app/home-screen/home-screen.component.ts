@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { GameManagerService } from '../game-manager.service';
+import { FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'spf-home-screen',
@@ -9,9 +10,16 @@ import { GameManagerService } from '../game-manager.service';
   styleUrls: ['./home-screen.component.scss'],
 })
 export class HomeScreenComponent implements OnInit {
-  name = '';
-  roomCode = '';
   urlContainsRoomCode = false;
+  nameForm = new FormControl('', [
+    Validators.required,
+    Validators.maxLength(16),
+  ]);
+  roomCodeForm = new FormControl('', [
+    Validators.required,
+    Validators.minLength(4),
+    Validators.maxLength(4),
+  ]);
 
   constructor(
     private gameService: GameManagerService,
@@ -20,25 +28,36 @@ export class HomeScreenComponent implements OnInit {
 
   ngOnInit() {
     if (!environment.production) {
-      this.name =
+      this.nameForm.setValue(
         environment.mockNames[
           Math.floor(Math.random() * environment.mockNames.length)
-        ];
+        ]
+      );
     }
     const roomCode = this.route.snapshot.paramMap.get('roomCode');
     if (roomCode) {
-      this.roomCode = roomCode;
+      this.roomCodeForm.setValue(roomCode);
       this.urlContainsRoomCode = true;
     }
   }
 
   joinGame() {
-    if (this.name.length && this.roomCode.length) {
-      this.gameService.joinGame(this.name, this.roomCode.toUpperCase());
+    if (this.nameForm.valid && this.roomCodeForm.valid) {
+      this.gameService.joinGame(
+        this.nameForm.value,
+        this.roomCodeForm.value.toUpperCase()
+      );
+    } else {
+      this.nameForm.markAsTouched();
+      this.roomCodeForm.markAsTouched();
     }
   }
 
   createGame() {
-    this.gameService.createGame(this.name);
+    if (this.nameForm.valid) {
+      this.gameService.createGame(this.nameForm.value);
+    } else {
+      this.nameForm.markAsTouched();
+    }
   }
 }

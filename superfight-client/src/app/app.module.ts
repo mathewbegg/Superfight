@@ -4,7 +4,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SocketIoModule } from 'ngx-socket-io';
 import { appSocketConfig } from './socket-config';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HomeScreenComponent } from './home-screen/home-screen.component';
 import { GameScreenComponent } from './game-screen/game-screen.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -36,6 +36,7 @@ import { MatInputModule } from '@angular/material/input';
     AppRoutingModule,
     SocketIoModule.forRoot(appSocketConfig),
     FormsModule,
+    ReactiveFormsModule,
     BrowserAnimationsModule,
     MatListModule,
     MatButtonModule,

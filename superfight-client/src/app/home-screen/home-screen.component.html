@@ -1,14 +1,21 @@
 <div class="join-form">
-  <h2>Join a game</h2>
+  <h2>{{ urlContainsRoomCode ? 'Enter your Name' : 'Join or Create Room' }}</h2>
   <mat-form-field appearance="outline">
     <mat-label>Name</mat-label>
-    <input matInput placeholder="e.g. George" [(ngModel)]="name" />
+    <input matInput placeholder="e.g. George" [formControl]="nameForm" />
+    <mat-error *ngIf="nameForm.hasError('required')"
+      >Please enter your name</mat-error
+    >
+    <mat-error *ngIf="nameForm.hasError('maxlength')"
+      >Max 16 characters</mat-error
+    >
   </mat-form-field>
   <mat-form-field *ngIf="!urlContainsRoomCode" appearance="outline">
     <mat-label>Room Code</mat-label>
-    <input matInput placeholder="e.g. YEET" [(ngModel)]="roomCode" />
+    <input matInput placeholder="e.g. YEET" [formControl]="roomCodeForm" />
+    <mat-error>Please enter a valid 4 digit room code</mat-error>
   </mat-form-field>
-  <button mat-button color="accent" (click)="joinGame()">Connect</button>
+  <button mat-button color="accent" (click)="joinGame()">Join Room</button>
   <div *ngIf="!urlContainsRoomCode">Or</div>
   <button
     mat-button
