@@ -25,7 +25,10 @@ export class AppComponent extends BaseUiStateComponent {
   }
 
   displayCopiedMessage() {
-    this.snackBar.open('Link Copied', null, { duration: 1000 });
+    this.snackBar.open('Link Copied', 'close', {
+      duration: 1000,
+      panelClass: 'spf-snackbar',
+    });
   }
 
   getRoomLink(): string {

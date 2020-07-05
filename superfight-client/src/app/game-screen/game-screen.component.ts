@@ -3,6 +3,7 @@ import { PhaseName } from '../models/game.models';
 import { GameManagerService } from '../game-manager.service';
 import { BaseUiStateComponent } from '../models/base-ui-state.component';
 import { DialogService } from '../dialogs/dialog.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'spf-game-screen',
@@ -18,7 +19,8 @@ export class GameScreenComponent extends BaseUiStateComponent {
 
   constructor(
     protected gameManager: GameManagerService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private snackBar: MatSnackBar
   ) {
     super(gameManager);
   }
@@ -31,15 +33,26 @@ export class GameScreenComponent extends BaseUiStateComponent {
     });
   }
 
-  newGame() {
+  newGameClicked() {
     if (this.uiState.gameState.phase.phaseName === PhaseName.WAITING) {
-      this.gameManager.newGame();
+      this.newGame();
     } else {
       this.dialogService.areYouSure().subscribe((confirmNew) => {
         if (confirmNew) {
-          this.gameManager.newGame();
+          this.newGame();
         }
       });
+    }
+  }
+
+  newGame() {
+    if (this.uiState.playerList.length < 3) {
+      this.snackBar.open('You need at least 3 players', 'close', {
+        duration: 3000,
+        panelClass: 'spf-snackbar',
+      });
+    } else {
+      this.gameManager.newGame();
     }
   }
 }
