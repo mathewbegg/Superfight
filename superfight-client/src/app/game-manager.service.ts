@@ -62,7 +62,7 @@ export class GameManagerService {
 
   createGame(name: string) {
     this.socket.emit(EventName.CREATE_ROOM, new CommandCreateRoom());
-    this.socket.on(EventName.CREATE_ROOM_SUCCESS, (roomCode: string) => {
+    this.socket.once(EventName.CREATE_ROOM_SUCCESS, (roomCode: string) => {
       this.joinGame(name, roomCode);
     });
   }

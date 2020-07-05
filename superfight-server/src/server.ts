@@ -81,16 +81,19 @@ function userConnect(socket: Socket) {
     socket.on(EventName.COMMAND_TO_SERVER, (command: CommandToServer) => {
       rooms[roomName].parseCommand(player.id, command);
     });
-    socket.on(EventName.LEAVE_ROOM, () => {
+
+    socket.once(EventName.LEAVE_ROOM, () => {
       removePlayerAndDeleteIfEmpty(player, roomName);
+      socket.removeAllListeners(EventName.COMMAND_TO_SERVER);
       socket.leave(roomName);
     });
 
-    socket.on('disconnect', (reason) => {
+    socket.once('disconnect', (reason) => {
       console.log(
         `${player.name}-${player.id} disconnected. Reason: ${reason}`
       );
       removePlayerAndDeleteIfEmpty(player, roomName);
+      socket.removeAllListeners(EventName.COMMAND_TO_SERVER);
     });
   });
 }
