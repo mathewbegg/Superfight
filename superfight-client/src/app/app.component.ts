@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { DialogService } from './dialogs/dialog.service';
 import { BaseUiStateComponent } from './models/base-ui-state.component';
 import { GameManagerService } from './game-manager.service';
-import { ActivatedRoute } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-root',
@@ -15,13 +15,17 @@ export class AppComponent extends BaseUiStateComponent {
   constructor(
     protected gameManager: GameManagerService,
     private dialogService: DialogService,
-    private route: ActivatedRoute
+    private snackBar: MatSnackBar
   ) {
     super(gameManager);
   }
 
   openRules() {
     this.dialogService.openRules();
+  }
+
+  displayCopiedMessage() {
+    this.snackBar.open('Link Copied', null, { duration: 1000 });
   }
 
   getRoomLink(): string {

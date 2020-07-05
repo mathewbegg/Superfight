@@ -5,6 +5,7 @@
       <button
         *ngIf="uiState.roomName && uiState.gameState"
         mat-icon-button
+        (click)="displayCopiedMessage()"
         [cdkCopyToClipboard]="getRoomLink()"
         matTooltip="Get Invitation Link"
       >
