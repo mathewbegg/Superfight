@@ -5,6 +5,7 @@ import { RoomList, AllPlayersList, CatalogueConnection } from './server-models';
 import {
   CommandJoinRoom,
   Card,
+  Player,
   CommandToServer,
   PrivateState,
   GameState,
@@ -62,8 +63,8 @@ function userConnect(socket: Socket) {
   });
 
   socket.on(EventName.JOIN_ROOM, (action: CommandJoinRoom) => {
-    const player = action.payload.player;
-    const roomName = action.payload.roomName;
+    const player: Player = action.payload.player;
+    const roomName: string = action.payload.roomName;
     socket.join(roomName);
 
     if (rooms[roomName]) {
@@ -81,17 +82,28 @@ function userConnect(socket: Socket) {
       rooms[roomName].parseCommand(player.id, command);
     });
     socket.on(EventName.LEAVE_ROOM, () => {
-      if (rooms[roomName]) {
-        rooms[roomName].removePlayer(player);
-        console.log(`${player.name}-${player.id} left room: ${roomName}`);
-      }
-      if (!rooms[roomName]?.getPlayerList().length) {
-        delete rooms[roomName];
-        console.log(`deleting empty room: ${roomName}`);
-      }
+      removePlayerAndDeleteIfEmpty(player, roomName);
       socket.leave(roomName);
     });
+
+    socket.on('disconnect', (reason) => {
+      console.log(
+        `${player.name}-${player.id} disconnected. Reason: ${reason}`
+      );
+      removePlayerAndDeleteIfEmpty(player, roomName);
+    });
   });
+}
+
+function removePlayerAndDeleteIfEmpty(player: Player, roomCode: string) {
+  if (rooms[roomCode]) {
+    rooms[roomCode].removePlayer(player);
+    console.log(`${player.name}-${player.id} left room: ${roomCode}`);
+  }
+  if (!rooms[roomCode]?.getPlayerList().length) {
+    delete rooms[roomCode];
+    console.log(`deleting empty room: ${roomCode}`);
+  }
 }
 
 /**
