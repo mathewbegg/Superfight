@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { GameManagerService } from '../game-manager.service';
-import { FormControl, Validators } from '@angular/forms';
-import { MatFormFieldControl } from '@angular/material/form-field';
 
 @Component({
   selector: 'spf-home-screen',
@@ -12,9 +10,13 @@ import { MatFormFieldControl } from '@angular/material/form-field';
 })
 export class HomeScreenComponent implements OnInit {
   name = '';
-  roomName = '';
+  roomCode = '';
+  urlContainsRoomCode = false;
 
-  constructor(private gameService: GameManagerService) {}
+  constructor(
+    private gameService: GameManagerService,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit() {
     if (!environment.production) {
@@ -23,11 +25,16 @@ export class HomeScreenComponent implements OnInit {
           Math.floor(Math.random() * environment.mockNames.length)
         ];
     }
+    const roomCode = this.route.snapshot.paramMap.get('roomCode');
+    if (roomCode) {
+      this.roomCode = roomCode;
+      this.urlContainsRoomCode = true;
+    }
   }
 
   joinGame() {
-    if (this.name.length && this.roomName.length) {
-      this.gameService.joinGame(this.name, this.roomName.toUpperCase());
+    if (this.name.length && this.roomCode.length) {
+      this.gameService.joinGame(this.name, this.roomCode.toUpperCase());
     }
   }
 

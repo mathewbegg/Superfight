@@ -6,11 +6,13 @@ import { GameManagerService } from './game-manager.service';
 
 const routes: Routes = [
   { path: '', component: HomeScreenComponent },
+  { path: 'join/:roomCode', component: HomeScreenComponent },
   {
     path: 'game',
     component: GameScreenComponent,
     canActivate: [GameManagerService],
   },
+  { path: '**', redirectTo: '' },
 ];
 
 @NgModule({

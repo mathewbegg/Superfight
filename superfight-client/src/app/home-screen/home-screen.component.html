@@ -4,10 +4,18 @@
     <mat-label>Name</mat-label>
     <input matInput placeholder="e.g. George" [(ngModel)]="name" />
   </mat-form-field>
-  <mat-form-field appearance="outline">
-    <mat-label>Room</mat-label>
-    <input matInput placeholder="e.g. YEET" [(ngModel)]="roomName" />
+  <mat-form-field *ngIf="!urlContainsRoomCode" appearance="outline">
+    <mat-label>Room Code</mat-label>
+    <input matInput placeholder="e.g. YEET" [(ngModel)]="roomCode" />
   </mat-form-field>
   <button mat-button color="accent" (click)="joinGame()">Connect</button>
-  <button mat-button color="primary" (click)="createGame()">Create Room</button>
+  <div *ngIf="!urlContainsRoomCode">Or</div>
+  <button
+    mat-button
+    color="primary"
+    (click)="createGame()"
+    *ngIf="!urlContainsRoomCode"
+  >
+    Create Room
+  </button>
 </div>
