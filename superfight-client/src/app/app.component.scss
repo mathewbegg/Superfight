@@ -7,6 +7,8 @@ mat-toolbar {
   display: flex;
   align-items: center;
   .room-name {
+    display: flex;
+    align-items: center;
     margin-right: 48px;
   }
 }

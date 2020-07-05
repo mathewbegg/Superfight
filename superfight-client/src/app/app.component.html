@@ -2,7 +2,14 @@
   <div>SUPERFIGHT</div>
   <div class="toolbar-section">
     <div *ngIf="uiState.roomName && uiState.gameState" class="room-name">
-      ROOM NAME: {{ uiState.roomName | uppercase }}
+      <button
+        *ngIf="uiState.roomName && uiState.gameState"
+        mat-icon-button
+        [cdkCopyToClipboard]="getRoomLink()"
+      >
+        <mat-icon>link</mat-icon>
+      </button>
+      ROOM CODE: {{ uiState.roomName | uppercase }}
     </div>
     <button mat-icon-button (click)="openRules()">
       <mat-icon>info</mat-icon>
