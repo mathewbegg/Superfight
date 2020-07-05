@@ -6,12 +6,13 @@
         *ngIf="uiState.roomName && uiState.gameState"
         mat-icon-button
         [cdkCopyToClipboard]="getRoomLink()"
+        matTooltip="Get Invitation Link"
       >
         <mat-icon>link</mat-icon>
       </button>
       ROOM CODE: {{ uiState.roomName | uppercase }}
     </div>
-    <button mat-icon-button (click)="openRules()">
+    <button mat-icon-button (click)="openRules()" matTooltip="Rules">
       <mat-icon>info</mat-icon>
     </button>
   </div>
