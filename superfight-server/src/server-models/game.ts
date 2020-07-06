@@ -22,6 +22,7 @@ export class SuperfightGame {
   private originalFighterB: Card[];
   private tieBreaking = false;
   private playersWhoVoted: { [id: string]: boolean } = {};
+  private challengerIndex: number;
   gameState = new BehaviorSubject<GameState>(null);
   privateState = new BehaviorSubject<PrivateState>(null);
 
@@ -39,6 +40,7 @@ export class SuperfightGame {
       this.clearScores();
       this.whiteDeck.shuffle();
       this.blackDeck.shuffle();
+      this.challengerIndex = 2;
       this.advanceToSelectingPhase();
     } else {
       this.gameLog('ERROR', 'Cannot start a game with fewer than 3 players.');
@@ -155,22 +157,26 @@ export class SuperfightGame {
       this.playerA = this.playerList[0];
       this.playerB = this.playerList[1];
     } else if (!rematch) {
-      const previousLoser =
-        champion.id === this.playerA.id ? this.playerB : this.playerA;
-      let challengerIndex = this.playerList
-        .map((player) => player.id)
-        .indexOf(previousLoser.id);
-      while (
-        this.playerList[challengerIndex].id === champion.id ||
-        this.playerList[challengerIndex].id === previousLoser.id
-      ) {
-        challengerIndex = (challengerIndex + 1) % this.playerList.length;
-      }
+      this.playerB = this.getNextChallenger(champion);
       this.playerA = champion;
-      this.playerB = this.playerList[challengerIndex];
     }
     this.updateGameState();
     this.updatePrivateState();
+  }
+
+  /**
+   * Finds the next challenger given the champion, using current players A and B
+   */
+  getNextChallenger(champion: Player): Player {
+    const loser = champion.id === this.playerA.id ? this.playerB : this.playerA;
+    while (
+      this.playerList[this.challengerIndex]?.id === champion.id ||
+      this.playerList[this.challengerIndex].id === loser.id
+    ) {
+      this.challengerIndex =
+        (this.challengerIndex + 1) % this.playerList.length;
+    }
+    return this.playerList[this.challengerIndex];
   }
 
   selectFighter(playerId: string, command: CommandToServer) {
