@@ -1,6 +1,8 @@
 import * as express from 'express';
-import { Server } from 'http';
+import { Server } from 'https';
 import { Socket } from 'socket.io';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
 import { RoomList, AllPlayersList, CatalogueConnection } from './server-models';
 import {
   CommandJoinRoom,
@@ -17,9 +19,15 @@ import { DynamoCatalogue } from './catalogue-connections/dynamoCatalogue';
 var whiteCatalogue: Card[];
 var blackCatalogue: Card[];
 
-const server = new Server(express()).listen(3000, () => {
-  console.log('Listening at :3000...');
-});
+const key = readFileSync(resolve('../key.pem'));
+const cert = readFileSync(resolve('../cert.pem'));
+
+const server = new Server({ key: key, cert: cert }, express()).listen(
+  3000,
+  () => {
+    console.log('Listening at :3000...');
+  }
+);
 
 const io = require('socket.io')(server);
 

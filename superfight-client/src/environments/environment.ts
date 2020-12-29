@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  serverAddress: 'http://localhost:3000',
+  serverAddress: 'https://localhost:3000',
   mockNames: [
     'Mathew',
     'John',
