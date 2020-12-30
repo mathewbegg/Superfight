@@ -1,28 +1,70 @@
-<div class="join-form">
-  <h2>{{ urlContainsRoomCode ? 'Enter your Name' : 'Join or Create Room' }}</h2>
-  <mat-form-field appearance="outline">
-    <mat-label>Name</mat-label>
-    <input matInput placeholder="e.g. George" [formControl]="nameForm" />
-    <mat-error *ngIf="nameForm.hasError('required')"
-      >Please enter your name</mat-error
-    >
-    <mat-error *ngIf="nameForm.hasError('maxlength')"
-      >Max 16 characters</mat-error
-    >
-  </mat-form-field>
-  <mat-form-field *ngIf="!urlContainsRoomCode" appearance="outline">
-    <mat-label>Room Code</mat-label>
-    <input matInput placeholder="e.g. YEET" [formControl]="roomCodeForm" />
-    <mat-error>Please enter a valid 4 digit room code</mat-error>
-  </mat-form-field>
-  <button mat-button color="accent" (click)="joinGame()">Join Room</button>
-  <div *ngIf="!urlContainsRoomCode">Or</div>
-  <button
-    mat-button
-    color="primary"
-    (click)="createGame()"
-    *ngIf="!urlContainsRoomCode"
-  >
-    Create Room
-  </button>
-</div>
+<ng-container [ngSwitch]="selectState">
+  <ng-container *ngSwitchCase="'selecting'">
+    <h1>Welcome To Superfight!</h1>
+    <div class="selecting-cards">
+      <spf-card
+        [card]="joinRoomCard"
+        (click)="setSelectState('joining')"
+      ></spf-card>
+      <spf-card
+        [card]="createRoomCard"
+        (click)="setSelectState('creating')"
+      ></spf-card>
+    </div>
+  </ng-container>
+
+  <ng-container *ngSwitchCase="'joining'">
+    <div class="header-and-back-arrow">
+      <button
+        mat-mini-fab
+        color="primary"
+        (click)="setSelectState('selecting')"
+      >
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h3>Enter Your Name {{ !urlContainsRoomCode ? 'And Room Code' : '' }}</h3>
+    </div>
+    <mat-form-field appearance="outline">
+      <mat-label>Name</mat-label>
+      <input matInput placeholder="e.g. George" [formControl]="nameForm" />
+      <mat-error *ngIf="nameForm.hasError('required')"
+        >Please enter your name</mat-error
+      >
+      <mat-error *ngIf="nameForm.hasError('maxlength')"
+        >Max 16 characters</mat-error
+      >
+    </mat-form-field>
+    <mat-form-field *ngIf="!urlContainsRoomCode" appearance="outline">
+      <mat-label>Room Code</mat-label>
+      <input matInput placeholder="e.g. YEET" [formControl]="roomCodeForm" />
+      <mat-error>Please enter a valid 4 digit room code</mat-error>
+    </mat-form-field>
+    <button mat-button color="accent" (click)="joinGame()">Join Room</button>
+  </ng-container>
+
+  <ng-container *ngSwitchCase="'creating'">
+    <div class="header-and-back-arrow">
+      <button
+        mat-mini-fab
+        color="primary"
+        (click)="setSelectState('selecting')"
+      >
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h3>Enter Your Name</h3>
+    </div>
+    <mat-form-field appearance="outline">
+      <mat-label>Name</mat-label>
+      <input matInput placeholder="e.g. George" [formControl]="nameForm" />
+      <mat-error *ngIf="nameForm.hasError('required')"
+        >Please enter your name</mat-error
+      >
+      <mat-error *ngIf="nameForm.hasError('maxlength')"
+        >Max 16 characters</mat-error
+      >
+    </mat-form-field>
+    <button mat-button color="primary" (click)="createGame()">
+      Create Room
+    </button>
+  </ng-container>
+</ng-container>
