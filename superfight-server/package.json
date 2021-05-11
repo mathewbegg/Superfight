@@ -21,7 +21,7 @@
     "lodash": "^4.17.21",
     "mongodb": "^3.5.7",
     "rxjs": "^6.5.5",
-    "socket.io": "^2.3.0",
+    "socket.io": "^2.4.0",
     "typescript": "^3.9.5"
   },
   "prettier": {
